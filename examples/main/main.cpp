@@ -14,6 +14,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 #if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 #include <signal.h>
@@ -84,6 +86,7 @@ static void sigint_handler(int signo) {
 #endif
 
 int main(int argc, char ** argv) {
+    auto start = std::chrono::high_resolution_clock::now();
     common_params params;
     g_params = &params;
     if (!common_params_parse(argc, argv, params, LLAMA_EXAMPLE_MAIN, print_usage)) {
@@ -149,6 +152,8 @@ int main(int argc, char ** argv) {
 
     model = llama_init.model.get();
     ctx = llama_init.context.get();
+    // LOG_INF("\n\nsleeping for 8 seconds\n");
+    // std::this_thread::sleep_for(std::chrono::seconds(8));
 
     if (model == NULL) {
         LOG_ERR("%s: error: unable to load model\n", __func__);
@@ -301,6 +306,7 @@ int main(int argc, char ** argv) {
         } else {
             // otherwise use the prompt as is
             prompt = params.prompt;
+            LOG_DBG("prompt: \"%s\"\n", prompt.c_str());
         }
 
         if (params.interactive_first || !prompt.empty() || session_tokens.empty()) {
@@ -552,7 +558,7 @@ int main(int argc, char ** argv) {
             LOG_ERR("%s : failed to eval\n", __func__);
             return 1;
         }
-
+    
         llama_token decoder_start_token_id = llama_model_decoder_start_token(model);
         if (decoder_start_token_id == LLAMA_TOKEN_NULL) {
             decoder_start_token_id = llama_vocab_bos(vocab);
@@ -563,7 +569,7 @@ int main(int argc, char ** argv) {
     }
 
     while ((n_remain != 0 && !is_antiprompt) || params.interactive) {
-        // predict
+        // predict: aben
         if (!embd.empty()) {
             // Note: (n_ctx - 4) here is to match the logic for commandline prompt handling via
             // --prompt or --file which uses the same value.
@@ -660,22 +666,38 @@ int main(int argc, char ** argv) {
                 }
             }
 
+
+            // aben: delay once before the very first decode
+            // static bool slept = false;
+            // if (!slept) {
+            //     LOG_INF("\n\nsleeping for 5 seconds\n");
+            //     std::this_thread::sleep_for(std::chrono::seconds(5));
+            //     slept = true;
+            // }
+
+            //aben:decode starts
+            // LOG_INF("embd size: %d\n", embd.size());
             for (int i = 0; i < (int) embd.size(); i += params.n_batch) {
                 int n_eval = (int) embd.size() - i;
                 if (n_eval > params.n_batch) {
                     n_eval = params.n_batch;
                 }
 
-                LOG_DBG("eval: %s\n", string_from(ctx, embd).c_str());
+                // LOG_INF("eval: %s\n", string_from(ctx, embd).c_str());
 
+                
+                // decode: aben but where is it implemented?
                 if (llama_decode(ctx, llama_batch_get_one(&embd[i], n_eval))) {
                     LOG_ERR("%s : failed to eval\n", __func__);
                     return 1;
                 }
+                // exit(0);
+                // LOG_INF("\n\nsleeping for 4 seconds\n");
+                // std::this_thread::sleep_for(std::chrono::seconds(4));
 
                 n_past += n_eval;
 
-                LOG_DBG("n_past = %d\n", n_past);
+                // LOG_DBG("n_past = %d\n", n_past);
                 // Display total tokens alongside total time
                 if (params.n_print > 0 && n_past % params.n_print == 0) {
                     LOG_DBG("\n\033[31mTokens consumed so far = %d / %d \033[0m\n", n_past, n_ctx);
@@ -688,6 +710,7 @@ int main(int argc, char ** argv) {
             }
         }
 
+        
         embd.clear();
 
         if ((int) embd_inp.size() <= n_consumed && !is_interacting) {
@@ -713,10 +736,10 @@ int main(int argc, char ** argv) {
             // decrement remaining sampling budget
             --n_remain;
 
-            LOG_DBG("n_remain: %d\n", n_remain);
+            // LOG_DBG("n_remain: %d\n", n_remain);
         } else {
             // some user input remains from prompt or interaction, forward it to processing
-            LOG_DBG("embd_inp.size(): %d, n_consumed: %d\n", (int) embd_inp.size(), n_consumed);
+            // LOG_DBG("embd_inp.size(): %d, n_consumed: %d\n", (int) embd_inp.size(), n_consumed);
             while ((int) embd_inp.size() > n_consumed) {
                 embd.push_back(embd_inp[n_consumed]);
 
@@ -731,11 +754,20 @@ int main(int argc, char ** argv) {
             }
         }
 
+
+        
+        // auto end = std::chrono::high_resolution_clock::now();
+        // Compute duration in milliseconds
+        // std::chrono::duration<double, std::milli> duration_ms = end - start;
+        // std::cout << "Elapsed time: " << duration_ms.count() << " ms" << std::endl;
         // display text
         if (input_echo && display) {
             for (auto id : embd) {
                 const std::string token_str = common_token_to_piece(ctx, id, params.special);
-
+    
+                
+                //aben 05.05.2025
+                // LOG_DBG("time to first token: %.3f ms\n", (ggml_time_ms() - (llama_perf_context(ctx).t_start_ms/1000.0)));
                 // Console/Stream Output
                 LOG("%s", token_str.c_str());
 
@@ -865,9 +897,22 @@ int main(int argc, char ** argv) {
                 console::set_display(console::reset);
                 display = true;
 
-                // Add tokens to embd only if the input buffer is non-empty
-                // Entering a empty line lets the user pass control back
-                if (buffer.length() > 1) {
+                if (buffer.empty()) { // Ctrl+D on empty line exits
+                    LOG("EOF by user\n");
+                    break;
+                }
+
+                if (buffer.back() == '\n') {
+                    // Implement #587:
+                    // If the user wants the text to end in a newline,
+                    // this should be accomplished by explicitly adding a newline by using \ followed by return,
+                    // then returning control by pressing return again.
+                    buffer.pop_back();
+                }
+
+                if (buffer.empty()) { // Enter key on empty line lets the user pass control back
+                    LOG_DBG("empty line, passing control back\n");
+                } else { // Add tokens to embd only if the input buffer is non-empty
                     // append input suffix if any
                     if (!params.input_suffix.empty() && !params.conversation_mode) {
                         LOG_DBG("appending input suffix: '%s'\n", params.input_suffix.c_str());
@@ -915,8 +960,6 @@ int main(int argc, char ** argv) {
 
                     n_remain -= line_inp.size();
                     LOG_DBG("n_remain: %d\n", n_remain);
-                } else {
-                    LOG_DBG("empty line, passing control back\n");
                 }
 
                 input_echo = false; // do not echo this again
@@ -959,7 +1002,9 @@ int main(int argc, char ** argv) {
     common_perf_print(ctx, smpl);
 
     common_sampler_free(smpl);
-
+    // while (true) {
+    //     LOG("Hello, world!\n");
+    // }
     llama_backend_free();
 
     ggml_threadpool_free_fn(threadpool);
