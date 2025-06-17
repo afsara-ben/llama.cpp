@@ -13,6 +13,7 @@
 #include <stdlib.h> // for qsort
 #include <stdio.h>  // for GGML_ASSERT
 
+
 #define GROUP_MAX_EPS 1e-15f
 #define GROUP_MAX_EPS_IQ3_XXS 1e-8f
 #define GROUP_MAX_EPS_IQ2_S 1e-8f
@@ -911,29 +912,29 @@ static void quantize_row_q2_K_impl(const float * GGML_RESTRICT x, block_q2_K * G
     float weight[16];
     uint8_t Ls[QK_K/16], Lm[QK_K/16];
 
-    for (int i = 0; i < nb; i++) {
+    for (int i = 0; i < nb; i++) { //for each superblock
         memset(sw, 0, QK_K/16*sizeof(float));
         float sumx2 = 0;
-        for (int j = 0; j < QK_K; ++j) sumx2 += x[j]*x[j];
-        float sigma2 = sumx2/QK_K;
-        for (int j = 0; j < QK_K/16; ++j) {
-            const float * GGML_RESTRICT qw = quant_weights + QK_K * i + 16*j;
-            for (int l = 0; l < 16; ++l) weight[l] = qw[l] * sqrtf(sigma2 + x[16*j + l]*x[16*j + l]);
-            for (int l = 0; l < QK_K/16; ++l) sw[j] += weight[l];
-            scales[j] = make_qkx3_quants(16, 3, x + 16*j, weight, L + 16*j, &mins[j], Laux, -0.9f, 0.05f, 36, false);
+        for (int j = 0; j < QK_K; ++j) sumx2 += x[j]*x[j]; //sum of squares of all elements in the superblock
+        float sigma2 = sumx2/QK_K; //variance of the superblock
+        for (int j = 0; j < QK_K/16; ++j) { //for each subblock
+            const float * GGML_RESTRICT qw = quant_weights + QK_K * i + 16*j; //quant_weights = pointer to the weight matrix, qw = Points to the quantization weights for this subblock
+            for (int l = 0; l < 16; ++l) weight[l] = qw[l] * sqrtf(sigma2 + x[16*j + l]*x[16*j + l]);//weight is tmp variable, used to get sw value
+            for (int l = 0; l < QK_K/16; ++l) sw[j] += weight[l]; //where is sw needed if make_qkx3_quants does the quantization?
+            scales[j] = make_qkx3_quants(16, 3, x + 16*j, weight, L + 16*j, &mins[j], Laux, -0.9f, 0.05f, 36, false); //make_qkx3_quants quantizes the 16 values in the subblock, storing quantized values in L, and the minimum in mins[j]
         }
 
         float dm, mm;
         dm  = make_qp_quants(QK_K/16, 15, scales, Ls, sw);
         mm  = make_qp_quants(QK_K/16, 15, mins,   Lm, sw);
 
-        y[i].d    = GGML_FP32_TO_FP16(dm);
+        y[i].d    = GGML_FP32_TO_FP16(dm); //Store the quantized scale and min as fp16 in the output block
         y[i].dmin = GGML_FP32_TO_FP16(mm);
-        dm        = GGML_FP16_TO_FP32(y[i].d);
+        dm        = GGML_FP16_TO_FP32(y[i].d); //why revert and put in dm, mm?
         mm        = GGML_FP16_TO_FP32(y[i].dmin);
 
         for (int j = 0; j < QK_K/16; ++j) {
-            y[i].scales[j] = Ls[j] | (Lm[j] << 4);
+            y[i].scales[j] = Ls[j] | (Lm[j] << 4); //Packs the quantized scale and min indices into a single byte for each subblock
         }
 
         if (requantize) {
@@ -949,6 +950,7 @@ static void quantize_row_q2_K_impl(const float * GGML_RESTRICT x, block_q2_K * G
             }
         }
 
+        //Packs 4 quantized 2-bit values into each byte of y[i].qs
         for (int j = 0; j < QK_K; j += 128) {
             for (int l = 0; l < 32; ++l) {
                 y[i].qs[j/4 + l] = L[j + l] | (L[j + l + 32] << 2) | (L[j + l + 64] << 4) | (L[j + l + 96] << 6);
@@ -1104,17 +1106,22 @@ void dequantize_row_q3_K(const block_q3_K * GGML_RESTRICT x, float * GGML_RESTRI
 }
 
 static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * GGML_RESTRICT y, int64_t n_per_row, const float * GGML_RESTRICT quant_weights) {
+    // GGML_LOG_DEBUG("n_per_row: %d\n", n_per_row);
     assert(n_per_row % QK_K == 0);
-    const int nb = n_per_row / QK_K;
-
+    // const int nb = n_per_row / QK_K;
+    GGML_LOG_DEBUG("quantize_row_q3_K_impl\n");
     int8_t L[QK_K];
     float scales[QK_K / 16];
     float weight[16];
     float sw[QK_K / 16];
     int8_t Ls[QK_K / 16];
 
+    // GGML_LOG_DEBUG("x: ");
+    // for (int64_t i = 0; i < 10; ++i) {
+    //     GGML_LOG_DEBUG("%f ", x[i]);
+    // }
+    printf("\n");
     for (int i = 0; i < nb; i++) {
-
         float sumx2 = 0;
         for (int j = 0; j < QK_K; ++j) sumx2 += x[j]*x[j];
         float sigma2 = 2*sumx2/QK_K;
@@ -1131,12 +1138,14 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
             sw[j] = sumw;
 
             scales[j] = make_qx_quants(16, 4, x + 16*j, L + 16*j, 1, weight);
+            GGML_LOG_DEBUG("scales[%d]: %f\n", j, scales[j]);
 
         }
 
         memset(y[i].scales, 0, 12);
 
         float d_block = make_qx_quants(QK_K/16, 32, scales, Ls, 1, sw);
+        GGML_LOG_DEBUG("d_block: %f\n", d_block);
         for (int j = 0; j < QK_K/16; ++j) {
             int l = Ls[j];
             if (j < 8) {
@@ -1149,11 +1158,18 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
         }
         y[i].d = GGML_FP32_TO_FP16(d_block);
 
+
+        // for each group of 16: //aben
+        //      compute sc = decode scale from y[i].scales
+        //      d = d_block * sc - so the subscale is further multiplied by d_block 
+        //      quantize x[16*j+ii] using d
+        //      clamp into [-4,3] and offset to [0,7] → stored in L[]
         int8_t sc;
         for (int j = 0; j < QK_K/16; ++j) {
             sc = j < 8 ? y[i].scales[j] & 0xF : y[i].scales[j-8] >> 4;
             sc = (sc | (((y[i].scales[8 + j%4] >> (2*(j/4))) & 3) << 4)) - 32;
             float d = GGML_FP16_TO_FP32(y[i].d) * sc;
+            GGML_LOG_DEBUG("d: %f\n", d);
             if (!d) {
                 continue;
             }
@@ -1182,8 +1198,13 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
                 y[i].qs[j/4 + l] = L[j + l] | (L[j + l + 32] << 2) | (L[j + l + 64] << 4) | (L[j + l + 96] << 6);
             }
         }
-
+        // GGML_LOG_DEBUG("x: ");
+        // for (int64_t i = 0; i < 10; ++i) {
+        //     GGML_LOG_DEBUG("%f ", x[i]);
+        // }
+        // GGML_LOG_DEBUG("x: %f\n", x[0]); 
         x += QK_K;
+        // exit(0);
     }
 }
 
@@ -2381,6 +2402,7 @@ void dequantize_row_iq1_s(const block_iq1_s * GGML_RESTRICT x, float * GGML_REST
     }
 }
 
+// aben
 void dequantize_row_iq1_m(const block_iq1_m * GGML_RESTRICT x, float * GGML_RESTRICT y, int64_t k) {
     assert(k % QK_K == 0);
     const int64_t nb = k / QK_K;
@@ -2560,7 +2582,7 @@ static int iq2_compare_func(const void * left, const void * right) {
     const int * r = (const int *)right;
     return l[0] < r[0] ? -1 : l[0] > r[0] ? 1 : l[1] < r[1] ? -1 : l[1] > r[1] ? 1 : 0;
 }
-
+// aben: ggml_quantize_init refers to here for IQ1_M
 void iq2xs_init_impl(enum ggml_type type) {
     const int gindex = iq2_data_index(type);
     const int grid_size = iq2_grid_size(type);
@@ -2826,17 +2848,23 @@ void iq2xs_init_impl(enum ggml_type type) {
     int      * kmap_q2xs;
     uint16_t * kneighbors_q2xs;
 
+    //aben: suppose one entry in kgrid is 1010101010001000 - each entry is 16 bits
     //printf("================================================================= %s(grid_size = %d)\n", __func__, grid_size);
     uint64_t * the_grid = (uint64_t *)malloc(grid_size*sizeof(uint64_t));
     for (int k = 0; k < grid_size; ++k) {
         int8_t * pos = (int8_t *)(the_grid + k);
         for (int i = 0; i < 8; ++i) {
-            int l = (kgrid[k] >> 2*i) & 0x3;
-            pos[i] = 2*l + 1;
+            int l = (kgrid[k] >> 2*i) & 0x3; //Each of the 2048 uint16_t values is unpacked into eight 2-bit numbers, for iq1m, l is 0,1 or 2   
+            pos[i] = 2*l + 1; //pos[i] is 1,3 or 5
         }
     }
+
+    // Inside a loop where 'i' is an index from 0 to grid_size-1
+    // 'index' is a 16-bit value calculated from the_grid[i]
+    // kmap_q2xs[index] = i;
+
     kgrid_q2xs = the_grid;
-    iq2_data[gindex].grid = the_grid;
+    iq2_data[gindex].grid = the_grid; //codebook vectors created - each entry 8 bytes or 64 bits, value is 1,3 or 5 - aben: why is 8 bit needed to represent 1,3,5
     kmap_q2xs = (int *)malloc(kmap_size*sizeof(int));
     iq2_data[gindex].map = kmap_q2xs;
     for (int i = 0; i < kmap_size; ++i) kmap_q2xs[i] = -1;
@@ -2849,7 +2877,7 @@ void iq2xs_init_impl(enum ggml_type type) {
             uint16_t q = (aux8[k] - 1)/2;
             index |= (q << 2*k);
         }
-        kmap_q2xs[index] = i;
+        kmap_q2xs[index] = i; //map the index to the corresponding index of the precomputed vector in the grid
     }
     int8_t pos[8];
     int * dist2 = (int *)malloc(2*grid_size*sizeof(int));
@@ -2929,6 +2957,8 @@ void iq2xs_free_impl(enum ggml_type type) {
 
 static int iq2_find_best_neighbour(const uint16_t * GGML_RESTRICT neighbours, const uint64_t * GGML_RESTRICT grid,
         const float * GGML_RESTRICT xval, const float * GGML_RESTRICT weight, float scale, int8_t * GGML_RESTRICT L) {
+    
+    printf("in iq2_find_best_neighbour\n");
     int num_neighbors = neighbours[0];
     GGML_ASSERT(num_neighbors > 0);
     float best_d2 = FLT_MAX;
@@ -4291,6 +4321,8 @@ size_t quantize_iq1_s(const float * GGML_RESTRICT src, void * GGML_RESTRICT dst,
     return nrow * nblock * sizeof(block_iq1_s);
 }
 
+// total size of block_iq1_m is 2(d)+32(qs)+16(qh)+8(scales)=58 bytes = 464 bits for 256 weights,=1.8125 bpw.
+// vy = Pointer to the output buffer where the quantized data (as block_iq1_m structures) will be stored
 static void quantize_row_iq1_m_impl(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t n, const float * GGML_RESTRICT quant_weights,
         float    * scales,
         float    * weight,
@@ -4311,15 +4343,15 @@ static void quantize_row_iq1_m_impl(const float * GGML_RESTRICT x, void * GGML_R
     GGML_ASSERT(kneighbors_q2xs && "forgot to call ggml_quantize_init()?");
     GGML_ASSERT(n%QK_K == 0);
 
-    block_iq1_m * y = vy;
+    block_iq1_m * y = vy; // output buffer cast to block_iq1_m, having qs,qh,scales elements
 
-    const int64_t nbl = n/QK_K;
+    const int64_t nbl = n/QK_K; //number of superblocks = nbl, each superblock has QK_K weights
 
     const int block_size = IQ1M_BLOCK_SIZE;
 
-    const float x_p[3] = {-1 + IQ1M_DELTA,  IQ1M_DELTA, 1 + IQ1M_DELTA};
-    const float x_m[3] = {-1 - IQ1M_DELTA, -IQ1M_DELTA, 1 - IQ1M_DELTA};
-    const uint8_t masks[4] = {0x00, 0x80, 0x08, 0x88};
+    const float x_p[3] = {-1 + IQ1M_DELTA,  IQ1M_DELTA, 1 + IQ1M_DELTA}; // unclear
+    const float x_m[3] = {-1 - IQ1M_DELTA, -IQ1M_DELTA, 1 - IQ1M_DELTA};// unclear
+    const uint8_t masks[4] = {0x00, 0x80, 0x08, 0x88};// unclear
 
     int * idx = (int *)(pairs + 1);
 
@@ -4328,26 +4360,33 @@ static void quantize_row_iq1_m_impl(const float * GGML_RESTRICT x, void * GGML_R
     iq1m_scale_t s;
     const float * xx;
 
-    for (int ibl = 0; ibl < nbl; ++ibl) {
-        memset(y[ibl].qs, 0, QK_K/8);
+    for (int ibl = 0; ibl < nbl; ++ibl) { // for each superblock
+        memset(y[ibl].qs, 0, QK_K/8); // initialize qs to 0
         memset(y[ibl].qh, 0, QK_K/16);
         memset(y[ibl].scales, 0, QK_K/32);
 
-        float max_scale = 0;
+        float max_scale = 0; //track the max subblock scale, it will become superblock scale, d
 
-        const float * xbl = x + QK_K*ibl;
+        const float * xbl = x + QK_K*ibl; //A pointer xbl is set to the beginning of the current QK_K-element segment of the input data.
         float sumx2 = 0;
-        for (int i = 0; i < QK_K; ++i) sumx2 += xbl[i]*xbl[i];
-        float sigma2 = 2*sumx2/QK_K;
+        for (int i = 0; i < QK_K; ++i) sumx2 += xbl[i]*xbl[i]; //simply squre each element in its place, and sum them up
+        float sigma2 = 2*sumx2/QK_K; //sigma2 i.e 2*mean of sq. values -  is the variance/energy of this superblock
 
-        for (int ib = 0; ib < QK_K/block_size; ++ib) {
-            const float * xb = xbl + block_size*ib;
+        for (int ib = 0; ib < QK_K/block_size; ++ib) { //for each subblock
+            const float * xb = xbl + block_size*ib; //xb points to the beginning of the current subblock having block_size (16) weights
+
+            //note: weight[i] values are not the tensor weights being quantized but rather the weights used in the objective function 
+            // for the quantization optimization: ∑i weight[i]×(xb[i] −s⋅q[i])^2, where s is the sub-block scale and qi is the quantized level for xb_i
+            
             if (quant_weights) {
                 const float * qw = quant_weights + QK_K*ibl + block_size*ib;
                 for (int i = 0; i < block_size; ++i) weight[i] = qw[i] * sqrtf(sigma2 + xb[i]*xb[i]);
             } else {
                 for (int i = 0; i < block_size; ++i) weight[i] = xb[i]*xb[i];
             }
+
+            
+            // Handling Near-Zero Sub-blocks
             float max = fabsf(xb[0]);
             for (int i = 1; i < block_size; ++i) max = MAX(max, fabsf(xb[i]));
             if (max < GROUP_MAX_EPS_IQ1_M) {
@@ -4361,17 +4400,23 @@ static void quantize_row_iq1_m_impl(const float * GGML_RESTRICT x, void * GGML_R
             // in ascending order, compute Si = sum[weight[j] xb[j], j = 0...i] and
             // Wi = sum[weight[j], j = 0...i], and use these to quckly get get the optimum scale
             // for each possible and score for each split.
+
+            // pairs[2*j] contains the j-th smallest value from the sub-block, and idx[2*j] contains its original index
             for (int j = 0; j < block_size; ++j) {
                 pairs[2*j] = xb[j];
                 idx[2*j] = j;
             }
             qsort(pairs, block_size, 2*sizeof(float), iq1_sort_helper);
             float best_score = -FLT_MIN, scale = max;
-            int besti1 = -1, besti2 = -1, best_k = -1;
+            int besti1 = -1, besti2 = -1, best_k = -1;  //partition boundaries i1,i2
             // 0: +, +
             // 1: +, -
             // 2: -, +
             // 3: -, -
+
+            // For each partition defined by (i1, i2), 
+            // the algorithm calculates sums needed to find the optimal scale and 
+            // evaluate the quality of this partition under four different scenarios (
             for (int i1 = 0; i1 <= block_size; ++i1) {
                 for (int i2 = i1; i2 <= block_size; ++i2) {
                     memset(sumqx, 0, 4*sizeof(float));
@@ -4443,13 +4488,17 @@ static void quantize_row_iq1_m_impl(const float * GGML_RESTRICT x, void * GGML_R
                         }
                     }
                     for (int k = 0; k < 4; ++k) {
-                        if (sumq2[k] > 0 && sumqx[k]*sumqx[k] > best_score*sumq2[k]) {
+                        if (sumq2[k] > 0 && sumqx[k]*sumqx[k] > best_score*sumq2[k]) {  
                             scale = sumqx[k]/sumq2[k]; best_score = scale*sumqx[k];
                             besti1 = i1; besti2 = i2; best_k = k;
                         }
                     }
                 }
             }
+            // After iterating through all (i1, i2) partitions, 
+            // scale will hold the optimal scale for the current sub-block ib, 
+            // and besti1, besti2, best_k will define the optimal partitioning and scenario.
+            
             GGML_ASSERT(besti1 >= 0 && besti2 >= 0 && best_k >= 0);
             for (int j =      0; j < besti1; ++j) L[idx[2*j]] = 0;
             for (int j = besti1; j < besti2; ++j) L[idx[2*j]] = 1;

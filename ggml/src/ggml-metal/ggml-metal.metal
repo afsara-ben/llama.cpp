@@ -8,6 +8,7 @@ __embed_ggml-common.h__
 #include "ggml-metal-impl.h"
 
 #include <metal_stdlib>
+// #include <metal_logging>
 
 using namespace metal;
 
@@ -62,6 +63,8 @@ void dequantize_bf16_t4(device const bfloat4 * src, short il, thread type4 & reg
     reg = (type4)(*(src));
 }
 #endif
+
+// metal_log(log_type_info, "Kernel started. Data[0] = %f\n", data[0]);
 
 template <typename type4x4>
 void dequantize_q4_0(device const block_q4_0 * xb, short il, thread type4x4 & reg) {
@@ -4483,7 +4486,7 @@ kernel void kernel_concat(
 template<int nr0, int nsg, int nw, typename args_t>
 void kernel_mul_mv_q2_K_f32_impl(
         args_t args,
-        device const char * src0,
+        device const char * src0, //why of type char?
         device const char * src1,
         device       char * dst,
         threadgroup  char * shmem,
@@ -4510,12 +4513,14 @@ void kernel_mul_mv_q2_K_f32_impl(
     float yl[32];
     float sumf[nr0]={0.f};
 
+    //aben: thread index calculation
     const short ix = tiisg/8;  // 0...3
     const short it = tiisg%8;  // 0...7
     const short iq = it/4;     // 0 or 1
     const short ir = it%4;     // 0...3
     const short is = (8*ir)/16;// 0 or 1
 
+    //aben: memory setup - why called y4?
     device const float * y4 = y + ix * QK_K + 128 * iq + 8 * ir;
 
     for (int ib = ix; ib < nb; ib += 4) {
@@ -4534,15 +4539,15 @@ void kernel_mul_mv_q2_K_f32_impl(
         for (short row = 0; row < nr0; row++) {
             float4 acc1 = {0.f, 0.f, 0.f, 0.f};
             float4 acc2 = {0.f, 0.f, 0.f, 0.f};
-            for (int i = 0; i < 8; i += 2) {
-                acc1[0] += yl[i+ 0] * (qs[i/2] & 0x0003);
-                acc2[0] += yl[i+ 1] * (qs[i/2] & 0x0300);
-                acc1[1] += yl[i+ 8] * (qs[i/2] & 0x000c);
-                acc2[1] += yl[i+ 9] * (qs[i/2] & 0x0c00);
-                acc1[2] += yl[i+16] * (qs[i/2] & 0x0030);
-                acc2[2] += yl[i+17] * (qs[i/2] & 0x3000);
-                acc1[3] += yl[i+24] * (qs[i/2] & 0x00c0);
-                acc2[3] += yl[i+25] * (qs[i/2] & 0xc000);
+            for (int i = 0; i < 8; i += 2) { //aben
+                acc1[0] += yl[i+ 0] * (qs[i/2] & 0x0003); //0000 0000 0000 0011
+                acc2[0] += yl[i+ 1] * (qs[i/2] & 0x0300); //0000 0011 0000 0000
+                acc1[1] += yl[i+ 8] * (qs[i/2] & 0x000c); //0000 0000 0000 1100 
+                acc2[1] += yl[i+ 9] * (qs[i/2] & 0x0c00); //0000 1100 0000 0000 
+                acc1[2] += yl[i+16] * (qs[i/2] & 0x0030); //0000 0000 0011 0000 
+                acc2[2] += yl[i+17] * (qs[i/2] & 0x3000); //0000 0011 0000 0000 
+                acc1[3] += yl[i+24] * (qs[i/2] & 0x00c0); //0000 0000 1100 0000 
+                acc2[3] += yl[i+25] * (qs[i/2] & 0xc000); //1100 0000 0000 0000 
             }
             float dall = dh[0];
             float dmin = dh[1] * 1.f/16.f;

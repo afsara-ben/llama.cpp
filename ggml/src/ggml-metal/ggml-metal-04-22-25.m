@@ -18,8 +18,6 @@
 
 // max number of MTLCommandBuffer used to submit a graph for processing
 #define GGML_METAL_MAX_COMMAND_BUFFERS 8
-static const bool GGML_METAL_LOG_ENABLE = false;
-static const bool GGML_METAL_LOG_ENABLE_CALL = false;
 
 #ifndef TARGET_OS_VISION
 #define TARGET_OS_VISION 0
@@ -116,122 +114,6 @@ static uint64_t ggml_kernel_MUL_MM_IQ1_S_F32_count = 0;
 static uint64_t ggml_kernel_MUL_MM_IQ1_M_F32_count = 0;
 static uint64_t ggml_kernel_MUL_MM_IQ4_NL_F32_count = 0;
 static uint64_t ggml_kernel_MUL_MM_IQ4_XS_F32_count = 0;
-
-static uint64_t ggml_kernel_MUL_MM_ID_F32_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_F16_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_BF16_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q4_0_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q4_1_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q5_0_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q5_1_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q8_0_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q2_K_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q3_K_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q4_K_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q5_K_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_Q6_K_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ2_XXS_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ2_XS_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ3_XXS_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ3_S_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ2_S_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ1_S_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ1_M_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ4_NL_F32_count = 0;
-static uint64_t ggml_kernel_MUL_MM_ID_IQ4_XS_F32_count = 0;
-
-static uint64_t ggml_kernel_GET_ROWS_F32_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_F16_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_BF16_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q4_0_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q4_1_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q5_0_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q5_1_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q8_0_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q2_K_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q3_K_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q4_K_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q5_K_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_Q6_K_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ2_XXS_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ2_XS_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ3_XXS_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ3_S_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ2_S_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ1_S_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ1_M_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ4_NL_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_IQ4_XS_count = 0;
-static uint64_t ggml_kernel_GET_ROWS_I32_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_F32_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_F16_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_BF16_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q4_0_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q4_1_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q5_0_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q5_1_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q8_0_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q2_K_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q3_K_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q4_K_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q5_K_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_Q6_K_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ2_XXS_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ2_XS_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ3_XXS_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ3_S_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ2_S_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ1_S_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ1_M_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ4_NL_count = 0;
-static uint64_t ggml_kernel_RMS_NORM_IQ4_XS_count = 0;
-static uint64_t ggml_kernel_L2_NORM_F32_count = 0;
-static uint64_t ggml_kernel_L2_NORM_F16_count = 0;
-static uint64_t ggml_kernel_L2_NORM_BF16_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q4_0_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q4_1_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q5_0_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q5_1_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q8_0_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q2_K_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q3_K_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q4_K_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q5_K_count = 0;
-static uint64_t ggml_kernel_L2_NORM_Q6_K_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ2_XXS_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ2_XS_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ3_XXS_count = 0;  
-static uint64_t ggml_kernel_L2_NORM_IQ3_S_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ2_S_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ1_S_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ1_M_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ4_NL_count = 0;
-static uint64_t ggml_kernel_L2_NORM_IQ4_XS_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_F32_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_F16_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_BF16_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q4_0_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q4_1_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q5_0_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q5_1_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q8_0_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q2_K_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q3_K_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q4_K_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q5_K_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_Q6_K_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ2_XXS_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ2_XS_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ3_XXS_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ3_S_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ2_S_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ1_S_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ1_M_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ4_NL_count = 0;
-static uint64_t ggml_kernel_GROUP_NORM_IQ4_XS_count = 0;
-
-
-
 
 // acquire
 static id<MTLDevice> ggml_backend_metal_device_acq(struct ggml_backend_metal_device_context * ctx) {
@@ -952,7 +834,6 @@ static struct ggml_backend_metal_context * ggml_metal_init(ggml_backend_dev_t de
 
         // simd_sum and simd_max requires MTLGPUFamilyApple7
 
-        //aben:mapping of .m to .metal
         GGML_METAL_ADD_KERNEL(GGML_METAL_KERNEL_TYPE_ADD,                             add,                             true);
         GGML_METAL_ADD_KERNEL(GGML_METAL_KERNEL_TYPE_ADD_ROW,                         add_row,                         true);
         GGML_METAL_ADD_KERNEL(GGML_METAL_KERNEL_TYPE_SUB,                             sub,                             true);
@@ -1614,17 +1495,17 @@ static void ggml_metal_encode_node(
 
     struct ggml_tensor * node = ggml_graph_node(gf, idx);
 
-    // if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: encoding node %3d, op = %8s\n", __func__, idx, ggml_op_name(node->op));
+    GGML_LOG_INFO("%s: encoding node %3d, op = %8s\n", __func__, idx, ggml_op_name(node->op));
 
     struct ggml_tensor * src0 = node->src[0];
     struct ggml_tensor * src1 = node->src[1];
     struct ggml_tensor * src2 = node->src[2];
     struct ggml_tensor * dst  = node;
-    // if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben:%s: src0 shape [%lld, %lld, %lld, %lld], src1 shape [%lld, %lld, %lld, %lld], src2 shape [%lld, %lld, %lld, %lld]\n",
-    //               __func__,
-    //               src0 ? src0->ne[0] : 0, src0 ? src0->ne[1] : 0, src0 ? src0->ne[2] : 0, src0 ? src0->ne[3] : 0,
-    //               src1 ? src1->ne[0] : 0, src1 ? src1->ne[1] : 0, src1 ? src1->ne[2] : 0, src1 ? src1->ne[3] : 0,
-    //               src2 ? src2->ne[0] : 0, src2 ? src2->ne[1] : 0, src2 ? src2->ne[2] : 0, src2 ? src2->ne[3] : 0);
+    GGML_LOG_INFO("%s: src0 shape [%d, %d, %d, %d], src1 shape [%d, %d, %d, %d], src2 shape [%d, %d, %d, %d]\n",
+                  __func__,
+                  src0 ? src0->ne[0] : 0, src0 ? src0->ne[1] : 0, src0 ? src0->ne[2] : 0, src0 ? src0->ne[3] : 0,
+                  src1 ? src1->ne[0] : 0, src1 ? src1->ne[1] : 0, src1 ? src1->ne[2] : 0, src1 ? src1->ne[3] : 0,
+                  src2 ? src2->ne[0] : 0, src2 ? src2->ne[1] : 0, src2 ? src2->ne[2] : 0, src2 ? src2->ne[3] : 0);
 
     if (ggml_is_empty(dst)) {
         return;
@@ -1766,18 +1647,18 @@ static void ggml_metal_encode_node(
 
                 const int nth = MIN(1024, ne0);
 
-                // GGML_LOG_INFO("aben: %s: src0: [%d, %d, %d, %d], src1: [%d, %d, %d, %d]\n", __func__, 
-                //     ne00, ne01, ne02, ne03,
-                //     ne10, ne11, ne12, ne13);
+                GGML_LOG_INFO("aben: %s: src0: [%d, %d, %d, %d], src1: [%d, %d, %d, %d]\n", __func__, 
+                    ne00, ne01, ne02, ne03,
+                    ne10, ne11, ne12, ne13);
 
                 [encoder dispatchThreadgroups:MTLSizeMake(ne1, ne2, ne3) threadsPerThreadgroup:MTLSizeMake(nth, 1, 1)];
             } break;
         case GGML_OP_ADD:
         case GGML_OP_SUB:
-        case GGML_OP_MUL: 
+        case GGML_OP_MUL: GGML_LOG_INFO("aben: %s: MUL\n", __func__);
         case GGML_OP_DIV:
             {
-
+                GGML_LOG_INFO("aben: %s: DIV\n", __func__);
                 GGML_ASSERT(src0t == GGML_TYPE_F32);
                 GGML_ASSERT(src1t == GGML_TYPE_F32);
 
@@ -1794,36 +1675,20 @@ static void ggml_metal_encode_node(
                     GGML_ASSERT(ne11 == 1);
 
                     switch (dst->op) {
-                        case GGML_OP_ADD: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_ADD_ROW].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: ADD_ROW src0 shape: [%lld, %lld, %lld, %lld], src1 shape: [%lld, %lld, %lld, %lld]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13); 
-                            break;
-                        case GGML_OP_SUB: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_SUB_ROW].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: SUB_ROW src0 shape: [%lld, %lld, %lld, %lld], src1 shape: [%lld, %lld, %lld, %lld]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13); 
-                            break;
-                        case GGML_OP_MUL: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_ROW].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MUL_ROW src0 shape: [%lld, %lld, %lld, %lld], src1 shape: [%lld, %lld, %lld, %lld]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13); 
-                            break;
-                        case GGML_OP_DIV: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_DIV_ROW].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: DIV_ROW src0 shape: [%lld, %lld, %lld, %lld], src1 shape: [%lld, %lld, %lld, %lld]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13); 
-                            break;
+                        case GGML_OP_ADD: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_ADD_ROW].pipeline; GGML_LOG_INFO("aben: %s: ADD_ROW\n", __func__); break;
+                        case GGML_OP_SUB: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_SUB_ROW].pipeline; GGML_LOG_INFO("aben: %s: SUB_ROW\n", __func__); break;
+                        case GGML_OP_MUL: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_ROW].pipeline; GGML_LOG_INFO("aben: %s: MUL_ROW\n", __func__); break;
+                        case GGML_OP_DIV: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_DIV_ROW].pipeline; GGML_LOG_INFO("aben: %s: DIV_ROW\n", __func__); break;
                         default: GGML_ABORT("fatal error");
                     }
 
                     bcast_row = true;
                 } else {
                     switch (dst->op) {
-                        case GGML_OP_ADD: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_ADD].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: ADD\n", __func__); 
-                            break;
-                        case GGML_OP_SUB: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_SUB].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: SUB\n", __func__); 
-                            break;
-                        case GGML_OP_MUL: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MUL\n", __func__); 
-                            break;
-                        case GGML_OP_DIV: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_DIV].pipeline; 
-                            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: DIV\n", __func__); 
-                            break;
+                        case GGML_OP_ADD: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_ADD].pipeline; break;
+                        case GGML_OP_SUB: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_SUB].pipeline; break;
+                        case GGML_OP_MUL: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL].pipeline; break;
+                        case GGML_OP_DIV: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_DIV].pipeline; break;
                         default: GGML_ABORT("fatal error");
                     }
                 }
@@ -2400,7 +2265,6 @@ static void ggml_metal_encode_node(
             } break;
         case GGML_OP_SSM_SCAN:
             {
-                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: SSM_SCAN\n", __func__);
                 struct ggml_tensor * src3 = node->src[3];
                 struct ggml_tensor * src4 = node->src[4];
                 struct ggml_tensor * src5 = node->src[5];
@@ -2562,7 +2426,7 @@ static void ggml_metal_encode_node(
             } break;
         case GGML_OP_MUL_MAT:
             {
-                // GGML_LOG_INFO("aben: inside GGML_OP_MUL_MAT\n");
+                GGML_LOG_INFO("inside GGML_OP_MUL_MAT\n");
                 GGML_ASSERT(ne00 == ne10);
 
                 GGML_ASSERT(ne12 % ne02 == 0);
@@ -2574,27 +2438,10 @@ static void ggml_metal_encode_node(
                 // find the break-even point where the matrix-matrix kernel becomes more efficient compared
                 // to the matrix-vector kernel aben ??
                 const int ne11_mm_min = 4;
-                // const int ne11_mm_min = 1; //aben: threshold for matrix-matrix kernel, if ne11 < ne11_mm_min, then use matrix-vector kernel
-                // const int ne11_mm_min = 0; //aben: Higher mat-mul causes significant latency
-                // const int ne11_mm_min = 16; //almost all mat-vec
 
                 // first try to use small-batch mat-mv kernels
                 // these should be efficient for BS [2, ~8]
-                // """
-                // aben: 04/24/2025
-                // if ne00 is divisible by 256 and second src is F32 
-                //     and ((first src is one of the F16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0, IQ4_NL and ne11 is between 2 and 8) 
-                //     OR (first src is one of the Q4_K, Q5_K, Q6_K, IQ4_NL and ne11 is between 4 and 8))
-                //     then use matrix-vector kernel
-                // else 
-                // if device supports family MTLGPUFamilyApple7 and src0 is not transposed 
-                //     and src1 is not transposed and src1 is F32 and ne00 is divisible by 32 and ne00 is greater than or equal to 64 
-                //     and (ne11 is greater than ne11_mm_min or (src0t is quantized and ne12 is greater than 1))
-                //     then use matrix-matrix kernel 
-                // otherwise use matrix-vector kernel //custom kernels 
-                // //but how is this logic chosen?
-                // """
-                if (src1t == GGML_TYPE_F32 && (ne00%256 == 0) && 
+                if (src1t == GGML_TYPE_F32 && (ne00%256 == 0) &&
                     (
                      (
                       (
@@ -2616,7 +2463,7 @@ static void ggml_metal_encode_node(
                      )
                     )
                    ) {
-                    // GGML_LOG_INFO("find break-even point where the matrix-matrix kernel becomes more efficient compared to the matrix-vector kernel\n");
+                    GGML_LOG_INFO("break-even point where the matrix-matrix kernel becomes more efficient compared to the matrix-vector kernel\n");
                     // TODO: determine the optimal parameters based on grid utilization
                     //       I still don't know why we should not always use the maximum available threads:
                     //
@@ -2648,11 +2495,11 @@ static void ggml_metal_encode_node(
 
                     id<MTLComputePipelineState> pipeline = nil;
 
-                    // GGML_LOG_INFO("doing MUL_MV_EXT %s: src0->type = %d\n", __func__, src0->type);
+                    GGML_LOG_INFO("doing MUL_MV_EXT %s: src0->type = %d\n", __func__, src0->type);
                     switch (src0->type) {
                         case GGML_TYPE_F16:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case F16 r1ptg=%d\n", __func__, r1ptg);
+                                GGML_LOG_INFO("%s: MV case F16 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_F16_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_F16_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_F16_F32_R1_4].pipeline; break;
@@ -2661,7 +2508,7 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q4_0:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q4_0 r1ptg=%d\n", __func__, r1ptg);
+                                GGML_LOG_INFO("%s: MV case Q4_0 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_0_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_0_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_0_F32_R1_4].pipeline; break;
@@ -2670,7 +2517,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q4_1:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q4_1 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_1_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_1_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_1_F32_R1_4].pipeline; break;
@@ -2679,7 +2525,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q5_0:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q5_0 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_0_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_0_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_0_F32_R1_4].pipeline; break;
@@ -2688,7 +2533,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q5_1:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q5_1 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_1_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_1_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_1_F32_R1_4].pipeline; break;
@@ -2697,7 +2541,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q8_0:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q8_0 r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q8_0_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q8_0_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q8_0_F32_R1_4].pipeline; break;
@@ -2706,7 +2549,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q4_K:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q4_K r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_K_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_K_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q4_K_F32_R1_4].pipeline; break;
@@ -2715,7 +2557,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q5_K:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q5_K r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_K_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_K_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q5_K_F32_R1_4].pipeline; break;
@@ -2724,7 +2565,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_Q6_K:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case Q6_K r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q6_K_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q6_K_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_Q6_K_F32_R1_4].pipeline; break;
@@ -2733,7 +2573,6 @@ static void ggml_metal_encode_node(
                             } break;
                         case GGML_TYPE_IQ4_NL:
                             switch (r1ptg) {
-                                if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: %s: MV case IQ4_NL r1ptg=%d\n", __func__, r1ptg);
                                 case 2: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_IQ4_NL_F32_R1_2].pipeline; break;
                                 case 3: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_IQ4_NL_F32_R1_3].pipeline; break;
                                 case 4: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_EXT_IQ4_NL_F32_R1_4].pipeline; break;
@@ -2778,21 +2617,13 @@ static void ggml_metal_encode_node(
                 } else
                 // for now the matrix-matrix multiplication kernel only works on A14+/M1+ SoCs
                 // AMD GPU and older A-chips will reuse matrix-vector multiplication kernel
-                // 
-                // aben: if device supports family MTLGPUFamilyApple7 and src0 is not transposed 
-                // and src1 is not transposed and src1 is F32 and ne00 is divisible by 32 and ne00 is greater than or equal to 64 
-                // and (ne11 is greater than ne11_mm_min or (src0t is quantized and ne12 is greater than 1))
-                // then use matrix-matrix kernel
-                // otherwise use matrix-vector kernel
-                // 
-                // GGML_LOG_INFO("aben: %s: ne00 = %d, ne01 = %d, ne02 = %d, ne10 = %d, ne11 = %d, ne12 = %d\n", __func__, ne00, ne01, ne02, ne10, ne11, ne12);
                 if ([device supportsFamily:MTLGPUFamilyApple7] &&
                         !ggml_is_transposed(src0) &&
                         !ggml_is_transposed(src1) &&
                         src1t == GGML_TYPE_F32 &&
                         ne00 % 32 == 0 && ne00 >= 64 &&
                         (ne11 > ne11_mm_min || (ggml_is_quantized(src0t) && ne12 > 1))) {
-                    // printf("matrix: ne00 = %6d, ne01 = %6d, ne02 = %6d, ne11 = %6d, ne12 = %6d\n", ne00, ne01, ne02, ne11, ne12);
+                    //printf("matrix: ne00 = %6d, ne01 = %6d, ne02 = %6d, ne11 = %6d, ne12 = %6d\n", ne00, ne01, ne02, ne11, ne12);
 
                     // some Metal matrix data types require aligned pointers
                     // ref: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf (Table 2.5)
@@ -2805,74 +2636,30 @@ static void ggml_metal_encode_node(
 
                     id<MTLComputePipelineState> pipeline = nil;
 
-                    // GGML_LOG_INFO("doing MUL MAT-MAT %s: src0 shape = [%d, %d, %d, %d], src1 shape = [%d, %d, %d, %d]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13);
+                    GGML_LOG_INFO("doing MUL MAT-MAT %s: src0->type = %d\n", __func__, src0->type);
                     switch (src0->type) {
-                        case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_F32_F32    ].pipeline; ggml_kernel_MUL_MM_F32_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_F32_F32\n"); 
-                            break;
-                        case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_F16_F32    ].pipeline; ggml_kernel_MUL_MM_F16_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_F16_F32\n"); 
-                            break;
-                        case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_BF16_F32   ].pipeline; ggml_kernel_MUL_MM_BF16_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_BF16_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_0_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q4_0_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_1_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_1_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q4_1_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_0_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q5_0_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_1_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_1_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q5_1_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q8_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q8_0_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q8_0_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q2_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q2_K_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q2_K_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q3_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q3_K_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q3_K_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_K_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q4_K_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_K_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q5_K_F32\n"); 
-                            break;
-                        case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q6_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q6_K_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_Q6_K_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_XXS_F32].pipeline; ggml_kernel_MUL_MM_IQ2_XXS_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ2_XXS_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_XS_F32 ].pipeline; ggml_kernel_MUL_MM_IQ2_XS_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ2_XS_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ3_XXS_F32].pipeline; ggml_kernel_MUL_MM_IQ3_XXS_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ3_XXS_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ3_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ3_S_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ3_S_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ2_S_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ2_S_F32\n"); 
-                            break;   
-                        case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ1_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ1_S_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ1_S_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ1_M_F32  ].pipeline; ggml_kernel_MUL_MM_IQ1_M_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ1_M_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ4_NL_F32 ].pipeline; ggml_kernel_MUL_MM_IQ4_NL_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ4_NL_F32\n"); 
-                            break;
-                        case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ4_XS_F32 ].pipeline; ggml_kernel_MUL_MM_IQ4_XS_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ4_XS_F32\n"); 
-                            break;
+                        case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_F32_F32    ].pipeline; ggml_kernel_MUL_MM_F32_F32_count++; GGML_LOG_INFO("aben: MUL_MM_F32_F32\n"); break;
+                        case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_F16_F32    ].pipeline; ggml_kernel_MUL_MM_F16_F32_count++; GGML_LOG_INFO("aben: MUL_MM_F16_F32\n"); break;
+                        case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_BF16_F32   ].pipeline; ggml_kernel_MUL_MM_BF16_F32_count++; GGML_LOG_INFO("aben: MUL_MM_BF16_F32\n"); break;
+                        case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_0_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q4_0_F32\n"); break;
+                        case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_1_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_1_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q4_1_F32\n"); break;
+                        case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_0_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q5_0_F32\n"); break;
+                        case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_1_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_1_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q5_1_F32\n"); break;
+                        case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q8_0_F32   ].pipeline; ggml_kernel_MUL_MM_Q8_0_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q8_0_F32\n"); break;
+                        case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q2_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q2_K_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q2_K_F32\n"); break;
+                        case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q3_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q3_K_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q3_K_F32\n"); break;
+                        case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q4_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q4_K_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q4_K_F32\n"); break;
+                        case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q5_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q5_K_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q5_K_F32\n"); break;
+                        case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_Q6_K_F32   ].pipeline; ggml_kernel_MUL_MM_Q6_K_F32_count++; GGML_LOG_INFO("aben: MUL_MM_Q6_K_F32\n"); break;
+                        case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_XXS_F32].pipeline; ggml_kernel_MUL_MM_IQ2_XXS_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ2_XXS_F32\n"); break;
+                        case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_XS_F32 ].pipeline; ggml_kernel_MUL_MM_IQ2_XS_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ2_XS_F32\n"); break;
+                        case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ3_XXS_F32].pipeline; ggml_kernel_MUL_MM_IQ3_XXS_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ3_XXS_F32\n"); break;
+                        case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ3_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ3_S_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ3_S_F32\n"); break;
+                        case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ2_S_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ2_S_F32\n"); break;   
+                        case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ1_S_F32  ].pipeline; ggml_kernel_MUL_MM_IQ1_S_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ1_S_F32\n"); break;
+                        case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ1_M_F32  ].pipeline; ggml_kernel_MUL_MM_IQ1_M_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ1_M_F32\n"); break;
+                        case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ4_NL_F32 ].pipeline; ggml_kernel_MUL_MM_IQ4_NL_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ4_NL_F32\n"); break;
+                        case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ4_XS_F32 ].pipeline; ggml_kernel_MUL_MM_IQ4_XS_F32_count++; GGML_LOG_INFO("aben: MUL_MM_IQ4_XS_F32\n"); break;
                         default: GGML_ABORT("MUL MAT-MAT not implemented");
                     }
 
@@ -2909,13 +2696,9 @@ static void ggml_metal_encode_node(
                     int nr1 = 1; // number of src1 rows per threadgroup
 
                     size_t smem = 0; // shared memory
-                    // GGML_LOG_INFO("doing MUL MAT-VEC %s: src0 shape = [%d, %d, %d, %d], src1 shape = [%d, %d, %d, %d]\n", __func__, ne00, ne01, ne02, ne03, ne10, ne11, ne12, ne13);
-                    
+
                     // use custom matrix x vector kernel
-                    // GGML_LOG_INFO("%s: doing MUL MV src0t = %d\n", __func__, src0t);
-                    // GGML_LOG_INFO("aben: %s: MUL MV src0: [%d, %d, %d, %d], src1: [%d, %d, %d, %d]\n", __func__, 
-                    //     ne00, ne01, ne02, ne03,
-                    //     ne10, ne11, ne12, ne13);
+                    GGML_LOG_INFO("%s: doing MUL MV src0t = %d\n", __func__, src0t);
                     //aben 04/22/25: this matrix x vector is src0t with FP32
                     switch (src0t) {
                         case GGML_TYPE_F32:
@@ -2926,7 +2709,7 @@ static void ggml_metal_encode_node(
                                 nr0 = 1;
                                 nr1 = 4;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_F32_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_F32_F32\n");        
+                                GGML_LOG_INFO("aben: MUL_MV_F32_F32\n");        
                             } break;
                         case GGML_TYPE_F16:
                             {
@@ -2936,19 +2719,19 @@ static void ggml_metal_encode_node(
                                 if (src1t == GGML_TYPE_F32) {
                                     if (ne11 * ne12 < 4) {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_F16_F32_1ROW].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_F16_F32_1ROW\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_F16_F32_1ROW\n");
                                     } else if (ne00 >= 128 && ne01 >= 8 && ne00%4 == 0) {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_F16_F32_L4].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_F16_F32_L4\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_F16_F32_L4\n");
                                         nr1 = ne11;
                                     } else {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_F16_F32].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_F16_F32\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_F16_F32\n");
                                         nr1 = 4;
                                     }
                                 } else {
                                     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_F16_F16].pipeline;
-                                    // GGML_LOG_INFO("aben: MUL_MV_F16_F16\n");
+                                    GGML_LOG_INFO("aben: MUL_MV_F16_F16\n");
                                     nr1 = 4;
                                 }
                             } break;
@@ -2960,19 +2743,19 @@ static void ggml_metal_encode_node(
                                 if (src1t == GGML_TYPE_F32) {
                                     if (ne11 * ne12 < 4) {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_BF16_F32_1ROW].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_BF16_F32_1ROW\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_BF16_F32_1ROW\n");
                                     } else if (ne00 >= 128 && ne01 >= 8 && ne00%4 == 0) {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_BF16_F32_L4].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_BF16_F32_L4\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_BF16_F32_L4\n");
                                         nr1 = ne11;
                                     } else {
                                         pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_BF16_F32].pipeline;
-                                        // GGML_LOG_INFO("aben: MUL_MV_BF16_F32\n");
+                                        GGML_LOG_INFO("aben: MUL_MV_BF16_F32\n");
                                         nr1 = 4;
                                     }
                                 } else {
                                     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_BF16_BF16].pipeline;
-                                    // GGML_LOG_INFO("aben: MUL_MV_BF16_BF16\n");
+                                    GGML_LOG_INFO("aben: MUL_MV_BF16_BF16\n");
                                     nr1 = 4;
                                 }
                             } break;
@@ -2982,7 +2765,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_0;
                                 nr0 = N_R0_Q4_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q4_0_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_0_F32\n");
                             } break;
                         case GGML_TYPE_Q4_1:
                             {
@@ -2990,7 +2773,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_1;
                                 nr0 = N_R0_Q4_1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q4_1_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_1_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_1_F32\n");
                             } break;
                         case GGML_TYPE_Q5_0:
                             {
@@ -2998,7 +2781,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_0;
                                 nr0 = N_R0_Q5_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q5_0_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_0_F32\n");
                             } break;
                         case GGML_TYPE_Q5_1:
                             {
@@ -3006,7 +2789,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_1;
                                 nr0 = N_R0_Q5_1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q5_1_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_1_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_1_F32\n");
                             } break;
                         case GGML_TYPE_Q8_0:
                             {
@@ -3014,7 +2797,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q8_0;
                                 nr0 = N_R0_Q8_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q8_0_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q8_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q8_0_F32\n");
                             } break;
                         case GGML_TYPE_Q2_K:
                             {
@@ -3022,7 +2805,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q2_K;
                                 nr0 = N_R0_Q2_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q2_K_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q2_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q2_K_F32\n");
                             } break;
                         case GGML_TYPE_Q3_K:
                             {
@@ -3030,7 +2813,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q3_K;
                                 nr0 = N_R0_Q3_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q3_K_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q3_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q3_K_F32\n");
                                 // GGML_LOG_INFO("ggml_metal_graph_compute: Q3_K call count = %d\n", g_kernel_q3_K_call_count);
                             } break;
                         case GGML_TYPE_Q4_K:
@@ -3039,7 +2822,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_K;
                                 nr0 = N_R0_Q4_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q4_K_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_K_F32\n");
                             } break;
                         case GGML_TYPE_Q5_K:
                             {
@@ -3047,7 +2830,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_K;
                                 nr0 = N_R0_Q5_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q5_K_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_K_F32\n");
                             } break;
                         case GGML_TYPE_Q6_K:
                             {
@@ -3055,7 +2838,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q6_K;
                                 nr0 = N_R0_Q6_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_Q6_K_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q6_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q6_K_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_XXS:
                             {
@@ -3064,7 +2847,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ2_XXS;
                                 smem = 256*8+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ2_XXS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XXS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_XXS_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_XS:
                             {
@@ -3072,7 +2855,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ2_XS;
                                 smem = 512*8+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ2_XS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
                             } break;
                         case GGML_TYPE_IQ3_XXS:
                             {
@@ -3081,7 +2864,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ3_XXS;
                                 smem = 256*4+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ3_XXS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ3_XXS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ3_XXS_F32\n");
                             } break;
                         case GGML_TYPE_IQ3_S:
                             {
@@ -3090,7 +2873,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ3_S;
                                 smem = 512*4;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ3_S_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ3_S_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ3_S_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_S:
                             {
@@ -3098,7 +2881,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ2_S;
                                 nr0 = N_R0_IQ2_S;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ2_S_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_S_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_S_F32\n");
                             } break;
                         case GGML_TYPE_IQ1_S:
                             {
@@ -3113,7 +2896,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ1_M;
                                 nr0 = N_R0_IQ1_M;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ1_M_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ1_M_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ1_M_F32\n");
                             } break;
                         case GGML_TYPE_IQ4_NL:
                             {
@@ -3122,7 +2905,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ4_NL;
                                 smem = 32*sizeof(float);
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ4_NL_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ4_NL_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ4_NL_F32\n");
                             } break;
                         case GGML_TYPE_IQ4_XS:
                             {
@@ -3131,7 +2914,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ4_XS;
                                 smem = 32*sizeof(float);
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ4_XS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ4_XS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ4_XS_F32\n");
                             } break;
                         default:
                             {
@@ -3222,28 +3005,28 @@ static void ggml_metal_encode_node(
 
                     switch (src0->type) {
                         GGML_LOG_INFO("%s: src0->type = %d\n", __func__, src0->type);
-                        case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_F32_F32    ].pipeline;  ggml_kernel_MUL_MM_ID_F32_F32_count++; break;
-                        case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_F16_F32    ].pipeline;  ggml_kernel_MUL_MM_ID_F16_F32_count++; break;
-                        case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_BF16_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_BF16_F32_count++; break;
-                        case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_0_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q4_0_F32_count++; break;
-                        case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_1_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q4_1_F32_count++; break;
-                        case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_0_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q5_0_F32_count++; break;
-                        case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_1_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q5_1_F32_count++; break;  
-                        case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q8_0_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q8_0_F32_count++; break;
-                        case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q2_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q2_K_F32_count++; break;
-                        case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q3_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q3_K_F32_count++; break;
-                        case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q4_K_F32_count++; break;
-                        case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q5_K_F32_count++; break;
-                        case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q6_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q6_K_F32_count++; break;
-                        case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XXS_F32].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_XXS_F32_count++; break;  
-                        case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XS_F32 ].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_XS_F32_count++; break;
-                        case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_XXS_F32].pipeline;  ggml_kernel_MUL_MM_ID_IQ3_XXS_F32_count++; break;
-                        case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_S_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ3_S_F32_count++; break;
-                        case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_S_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_S_F32_count++; break;
-                        case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ1_S_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ1_S_F32_count++; break;
-                        case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ1_M_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ1_M_F32_count++; break;
-                        case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ4_NL_F32 ].pipeline;  ggml_kernel_MUL_MM_ID_IQ4_NL_F32_count++; break;
-                        case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ4_XS_F32 ].pipeline;  ggml_kernel_MUL_MM_ID_IQ4_XS_F32_count++; break;
+                        case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_F32_F32    ].pipeline; break;
+                        case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_F16_F32    ].pipeline; break;
+                        case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_BF16_F32   ].pipeline; break;
+                        case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_0_F32   ].pipeline; break;
+                        case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_1_F32   ].pipeline; break;
+                        case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_0_F32   ].pipeline; break;
+                        case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_1_F32   ].pipeline; break;
+                        case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q8_0_F32   ].pipeline; break;
+                        case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q2_K_F32   ].pipeline; break;
+                        case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q3_K_F32   ].pipeline; break;
+                        case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q4_K_F32   ].pipeline; break;
+                        case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_K_F32   ].pipeline; break;
+                        case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q6_K_F32   ].pipeline; break;
+                        case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XXS_F32].pipeline; break;
+                        case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XS_F32 ].pipeline; break;
+                        case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_XXS_F32].pipeline; break;
+                        case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_S_F32  ].pipeline; break;
+                        case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_S_F32  ].pipeline; break;
+                        case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ1_S_F32  ].pipeline; break;
+                        case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ1_M_F32  ].pipeline; break;
+                        case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ4_NL_F32 ].pipeline; break;
+                        case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ4_XS_F32 ].pipeline; break;
                         default: GGML_ABORT("MUL_MAT_ID not implemented");
                     }
 
@@ -3293,8 +3076,7 @@ static void ggml_metal_encode_node(
                                 nsg = 1;
                                 nr0 = 1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_F32_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_F32_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_F32_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_F32_F32\n");
                             } break;
                         case GGML_TYPE_F16:
                             {
@@ -3303,8 +3085,7 @@ static void ggml_metal_encode_node(
                                 nsg = 1;
                                 nr0 = 1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_F16_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_F16_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_F16_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_F16_F32\n");
                             } break;
                         case GGML_TYPE_BF16:
                             {
@@ -3313,8 +3094,7 @@ static void ggml_metal_encode_node(
                                 nsg = 1;
                                 nr0 = 1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_BF16_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_BF16_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_BF16_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_BF16_F32\n");
                             } break;
                         case GGML_TYPE_Q4_0:
                             {
@@ -3322,8 +3102,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_0;
                                 nr0 = N_R0_Q4_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q4_0_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q4_0_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_0_F32\n");
                             } break;
                         case GGML_TYPE_Q4_1:
                             {
@@ -3331,8 +3110,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_1;
                                 nr0 = N_R0_Q4_1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q4_1_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q4_1_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_1_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_1_F32\n");
                             } break;
                         case GGML_TYPE_Q5_0:
                             {
@@ -3340,8 +3118,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_0;
                                 nr0 = N_R0_Q5_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q5_0_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q5_0_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_0_F32\n");
                             } break;
                         case GGML_TYPE_Q5_1:
                             {
@@ -3349,8 +3126,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_1;
                                 nr0 = N_R0_Q5_1;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q5_1_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q5_1_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_1_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_1_F32\n");
                             } break;
                         case GGML_TYPE_Q8_0:
                             {
@@ -3358,8 +3134,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q8_0;
                                 nr0 = N_R0_Q8_0;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q8_0_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q8_0_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q8_0_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q8_0_F32\n");
                             } break;
                         case GGML_TYPE_Q2_K:
                             {
@@ -3367,8 +3142,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q2_K;
                                 nr0 = N_R0_Q2_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q2_K_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q2_K_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q2_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q2_K_F32\n");
                             } break;
                         case GGML_TYPE_Q3_K:
                             {
@@ -3376,8 +3150,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q3_K;
                                 nr0 = N_R0_Q3_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q3_K_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q3_K_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q3_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q3_K_F32\n");
                             } break;
                         case GGML_TYPE_Q4_K:
                             {
@@ -3385,8 +3158,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q4_K;
                                 nr0 = N_R0_Q4_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q4_K_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q4_K_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q4_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q4_K_F32\n");
                             } break;
                         case GGML_TYPE_Q5_K:
                             {
@@ -3394,8 +3166,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q5_K;
                                 nr0 = N_R0_Q5_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q5_K_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q5_K_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q5_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q5_K_F32\n");
                             } break;
                         case GGML_TYPE_Q6_K:
                             {
@@ -3403,8 +3174,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_Q6_K;
                                 nr0 = N_R0_Q6_K;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_Q6_K_F32].pipeline;
-                                ggml_kernel_MUL_MM_ID_Q6_K_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_Q6_K_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_Q6_K_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_XXS:
                             {
@@ -3413,7 +3183,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ2_XXS;
                                 smem = 256*8+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ2_XXS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XXS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_XXS_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_XS:
                             {
@@ -3422,7 +3192,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ2_XS;
                                 smem = 512*8+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ2_XS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
                             } break;
                         case GGML_TYPE_IQ3_XXS:
                             {
@@ -3431,7 +3201,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ3_XXS;
                                 smem = 256*4+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ3_XXS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ3_XXS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ3_XXS_F32\n");
                             } break;
                         case GGML_TYPE_IQ3_S:
                             {
@@ -3440,8 +3210,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ3_S;
                                 smem = 512*4;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ3_S_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ3_S_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ3_S_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ3_S_F32\n");
                             } break;
                         case GGML_TYPE_IQ2_S:
                             {
@@ -3449,8 +3218,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ2_S;
                                 nr0 = N_R0_IQ2_S;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ2_S_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ2_S_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_S_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_S_F32\n");
                             } break;
                         case GGML_TYPE_IQ1_S:
                             {
@@ -3458,8 +3226,6 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ1_S;
                                 nr0 = N_R0_IQ1_S;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ1_S_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ1_S_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ1_S_F32\n");
                             } break;
                         case GGML_TYPE_IQ1_M:
                             {
@@ -3467,8 +3233,7 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ1_M;
                                 nr0 = N_R0_IQ1_M;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ1_M_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ1_M_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ1_M_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ1_M_F32\n");
                             } break;
                         case GGML_TYPE_IQ4_NL:
                             {
@@ -3477,8 +3242,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ4_NL;
                                 smem = 32*sizeof(float);
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ4_NL_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ4_NL_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ4_NL_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ4_NL_F32\n");
                             } break;
                         case GGML_TYPE_IQ4_XS:
                             {
@@ -3487,8 +3251,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ4_XS;
                                 smem = 32*sizeof(float);
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ4_XS_F32].pipeline;
-                                ggml_kernel_MUL_MV_IQ4_XS_F32_count++;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ4_XS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ4_XS_F32\n");
                             } break;
                         default:
                             {
@@ -3544,29 +3307,29 @@ static void ggml_metal_encode_node(
                 id<MTLComputePipelineState> pipeline = nil;
 
                 switch (src0->type) {
-                    case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_F32    ].pipeline;  ggml_kernel_GET_ROWS_F32_count++; break;
-                    case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_F16    ].pipeline;  ggml_kernel_GET_ROWS_F16_count++; break;
-                    case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_BF16   ].pipeline;  ggml_kernel_GET_ROWS_BF16_count++; break;
-                    case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_0   ].pipeline;  ggml_kernel_GET_ROWS_Q4_0_count++; break;
-                    case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_1   ].pipeline;  ggml_kernel_GET_ROWS_Q4_1_count++; break;
-                    case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_0   ].pipeline;  ggml_kernel_GET_ROWS_Q5_0_count++; break;
-                    case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_1   ].pipeline;  ggml_kernel_GET_ROWS_Q5_1_count++; break;
-                    case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q8_0   ].pipeline;  ggml_kernel_GET_ROWS_Q8_0_count++; break;
-                    case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q2_K   ].pipeline;  ggml_kernel_GET_ROWS_Q2_K_count++; break;
-                    case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q3_K   ].pipeline;  ggml_kernel_GET_ROWS_Q3_K_count++; break;
-                    case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_K   ].pipeline;  ggml_kernel_GET_ROWS_Q4_K_count++; break;
-                    case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_K   ].pipeline;  ggml_kernel_GET_ROWS_Q5_K_count++; break;
-                    case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q6_K   ].pipeline;  ggml_kernel_GET_ROWS_Q6_K_count++; break;
-                    case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XXS].pipeline;  ggml_kernel_GET_ROWS_IQ2_XXS_count++; break;
-                    case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XS ].pipeline;  ggml_kernel_GET_ROWS_IQ2_XS_count++; break;
-                    case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_XXS].pipeline;  ggml_kernel_GET_ROWS_IQ3_XXS_count++; break;
-                    case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_S  ].pipeline;  ggml_kernel_GET_ROWS_IQ3_S_count++; break;
-                    case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_S  ].pipeline;  ggml_kernel_GET_ROWS_IQ2_S_count++; break;
-                    case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ1_S  ].pipeline;  ggml_kernel_GET_ROWS_IQ1_S_count++; break;
-                    case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ1_M  ].pipeline;  ggml_kernel_GET_ROWS_IQ1_M_count++; break;
-                    case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ4_NL ].pipeline;  ggml_kernel_GET_ROWS_IQ4_NL_count++; break;
-                    case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ4_XS ].pipeline;  ggml_kernel_GET_ROWS_IQ4_XS_count++; break;
-                    case GGML_TYPE_I32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_I32    ].pipeline;  ggml_kernel_GET_ROWS_I32_count++; break;   
+                    case GGML_TYPE_F32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_F32    ].pipeline; break;
+                    case GGML_TYPE_F16:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_F16    ].pipeline; break;
+                    case GGML_TYPE_BF16:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_BF16   ].pipeline; break;
+                    case GGML_TYPE_Q4_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_0   ].pipeline; break;
+                    case GGML_TYPE_Q4_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_1   ].pipeline; break;
+                    case GGML_TYPE_Q5_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_0   ].pipeline; break;
+                    case GGML_TYPE_Q5_1:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_1   ].pipeline; break;
+                    case GGML_TYPE_Q8_0:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q8_0   ].pipeline; break;
+                    case GGML_TYPE_Q2_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q2_K   ].pipeline; break;
+                    case GGML_TYPE_Q3_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q3_K   ].pipeline; break;
+                    case GGML_TYPE_Q4_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q4_K   ].pipeline; break;
+                    case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_K   ].pipeline; break;
+                    case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q6_K   ].pipeline; break;
+                    case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XXS].pipeline; break;
+                    case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XS ].pipeline; break;
+                    case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_XXS].pipeline; break;
+                    case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_S  ].pipeline; break;
+                    case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_S  ].pipeline; break;
+                    case GGML_TYPE_IQ1_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ1_S  ].pipeline; break;
+                    case GGML_TYPE_IQ1_M:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ1_M  ].pipeline; break;
+                    case GGML_TYPE_IQ4_NL:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ4_NL ].pipeline; break;
+                    case GGML_TYPE_IQ4_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ4_XS ].pipeline; break;
+                    case GGML_TYPE_I32:     pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_I32    ].pipeline; break;
                     default: GGML_ABORT("not implemented");
                 }
 
@@ -4941,7 +4704,7 @@ static enum ggml_status ggml_metal_graph_compute(
             ctx->command_buffers[n_cb] = command_buffer;
 
             [command_buffer enqueue];
-            if (GGML_METAL_LOG_ENABLE) GGML_LOG_INFO("aben: encoding async for n_cb = %d\n", n_cb);
+            GGML_LOG_INFO("encoding async for n_cb = %d\n", n_cb);
             ctx->encode_async(n_cb);
         }
 
@@ -5014,56 +4777,54 @@ static enum ggml_status ggml_metal_graph_compute(
             [[MTLCaptureManager sharedCaptureManager] stopCapture];
         }
     }
-    if (GGML_METAL_LOG_ENABLE_CALL) { 
-        
-        if (ggml_kernel_MUL_MV_Q2_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q2_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q2_K_F32_count);
-        if (ggml_kernel_MUL_MV_Q3_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q3_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q3_K_F32_count);
-        if (ggml_kernel_MUL_MV_Q4_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_K_F32_count);
-        if (ggml_kernel_MUL_MV_Q5_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_K_F32_count);
-        if (ggml_kernel_MUL_MV_Q6_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q6_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q6_K_F32_count);
-        if (ggml_kernel_MUL_MV_IQ2_XXS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_XXS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_XXS_F32_count);
-        if (ggml_kernel_MUL_MV_IQ2_XS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_XS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_XS_F32_count);
-        if (ggml_kernel_MUL_MV_IQ3_XXS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ3_XXS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ3_XXS_F32_count);
-        if (ggml_kernel_MUL_MV_IQ3_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ3_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ3_S_F32_count);
-        if (ggml_kernel_MUL_MV_IQ2_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_S_F32_count);
-        if (ggml_kernel_MUL_MV_IQ1_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ1_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ1_S_F32_count);
-        if (ggml_kernel_MUL_MV_IQ1_M_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ1_M_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ1_M_F32_count);
-        if (ggml_kernel_MUL_MV_IQ4_NL_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ4_NL_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ4_NL_F32_count);
-        if (ggml_kernel_MUL_MV_IQ4_XS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ4_XS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ4_XS_F32_count);
-        if (ggml_kernel_MUL_MV_Q4_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_0_F32_count);
-        if (ggml_kernel_MUL_MV_Q4_1_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_1_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_1_F32_count);
-        if (ggml_kernel_MUL_MV_Q5_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_0_F32_count);
-        if (ggml_kernel_MUL_MV_Q5_1_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_1_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_1_F32_count);
-        if (ggml_kernel_MUL_MV_Q8_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q8_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q8_0_F32_count);
-        if (ggml_kernel_MUL_MV_F16_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_F16_F32_count = %llu\n", ggml_kernel_MUL_MV_F16_F32_count);
-        if (ggml_kernel_MUL_MV_F32_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_F32_F32_count = %llu\n", ggml_kernel_MUL_MV_F32_F32_count);
-        if (ggml_kernel_MUL_MV_BF16_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_BF16_F32_count = %llu\n", ggml_kernel_MUL_MV_BF16_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q2_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q2_K_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q3_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q3_K_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_K_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_K_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q6_K_F32_count = %llu\n", ggml_kernel_MUL_MV_Q6_K_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_XXS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_XXS_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_XS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_XS_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ3_XXS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ3_XXS_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ3_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ3_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ2_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ2_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ1_S_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ1_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ1_M_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ1_M_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ4_NL_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ4_NL_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_IQ4_XS_F32_count = %llu\n", ggml_kernel_MUL_MV_IQ4_XS_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_0_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q4_1_F32_count = %llu\n", ggml_kernel_MUL_MV_Q4_1_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_0_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q5_1_F32_count = %llu\n", ggml_kernel_MUL_MV_Q5_1_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_Q8_0_F32_count = %llu\n", ggml_kernel_MUL_MV_Q8_0_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_F16_F32_count = %llu\n", ggml_kernel_MUL_MV_F16_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_F32_F32_count = %llu\n", ggml_kernel_MUL_MV_F32_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MV_BF16_F32_count = %llu\n", ggml_kernel_MUL_MV_BF16_F32_count);
 
-        if (ggml_kernel_MUL_MM_F32_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_F32_F32_count = %llu\n", ggml_kernel_MUL_MM_F32_F32_count);
-        if (ggml_kernel_MUL_MM_F16_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_F16_F32_count = %llu\n", ggml_kernel_MUL_MM_F16_F32_count);
-        if (ggml_kernel_MUL_MM_BF16_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_BF16_F32_count = %llu\n", ggml_kernel_MUL_MM_BF16_F32_count);
-        if (ggml_kernel_MUL_MM_Q4_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_0_F32_count);
-        if (ggml_kernel_MUL_MM_Q4_1_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_1_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_1_F32_count);
-        if (ggml_kernel_MUL_MM_Q5_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_0_F32_count);
-        if (ggml_kernel_MUL_MM_Q5_1_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_1_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_1_F32_count);
-        if (ggml_kernel_MUL_MM_Q8_0_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q8_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q8_0_F32_count);
-        if (ggml_kernel_MUL_MM_Q2_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q2_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q2_K_F32_count);
-        if (ggml_kernel_MUL_MM_Q3_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q3_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q3_K_F32_count);
-        if (ggml_kernel_MUL_MM_Q4_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_K_F32_count);
-        if (ggml_kernel_MUL_MM_Q5_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_K_F32_count);
-        if (ggml_kernel_MUL_MM_Q6_K_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q6_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q6_K_F32_count);
-        if (ggml_kernel_MUL_MM_IQ2_XXS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_XXS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_XXS_F32_count);
-        if (ggml_kernel_MUL_MM_IQ2_XS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_XS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_XS_F32_count);
-        if (ggml_kernel_MUL_MM_IQ3_XXS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ3_XXS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ3_XXS_F32_count);
-        if (ggml_kernel_MUL_MM_IQ3_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ3_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ3_S_F32_count);
-        if (ggml_kernel_MUL_MM_IQ2_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_S_F32_count);
-        if (ggml_kernel_MUL_MM_IQ1_S_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ1_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ1_S_F32_count);
-        if (ggml_kernel_MUL_MM_IQ1_M_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ1_M_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ1_M_F32_count);
-        if (ggml_kernel_MUL_MM_IQ4_NL_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ4_NL_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ4_NL_F32_count);
-        if (ggml_kernel_MUL_MM_IQ4_XS_F32_count > 0) GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ4_XS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ4_XS_F32_count);
+
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_F32_F32_count = %llu\n", ggml_kernel_MUL_MM_F32_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_F16_F32_count = %llu\n", ggml_kernel_MUL_MM_F16_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_BF16_F32_count = %llu\n", ggml_kernel_MUL_MM_BF16_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_0_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_1_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_1_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_0_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_1_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_1_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q8_0_F32_count = %llu\n", ggml_kernel_MUL_MM_Q8_0_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q2_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q2_K_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q3_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q3_K_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q4_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q4_K_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q5_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q5_K_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_Q6_K_F32_count = %llu\n", ggml_kernel_MUL_MM_Q6_K_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_XXS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_XXS_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_XS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_XS_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ3_XXS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ3_XXS_F32_count); 
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ3_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ3_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ2_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ2_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ1_S_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ1_S_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ1_M_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ1_M_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ4_NL_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ4_NL_F32_count);
+    GGML_LOG_INFO("ggml_metal_graph_compute: total ggml_kernel_MUL_MM_IQ4_XS_F32_count = %llu\n", ggml_kernel_MUL_MM_IQ4_XS_F32_count);
     
-    }
-
+    
     
     return GGML_STATUS_SUCCESS;
 }
