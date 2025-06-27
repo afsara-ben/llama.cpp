@@ -1108,8 +1108,8 @@ void dequantize_row_q3_K(const block_q3_K * GGML_RESTRICT x, float * GGML_RESTRI
 static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * GGML_RESTRICT y, int64_t n_per_row, const float * GGML_RESTRICT quant_weights) {
     // GGML_LOG_DEBUG("n_per_row: %d\n", n_per_row);
     assert(n_per_row % QK_K == 0);
-    // const int nb = n_per_row / QK_K;
-    GGML_LOG_DEBUG("quantize_row_q3_K_impl\n");
+    const int nb = n_per_row / QK_K;
+    // GGML_LOG_DEBUG("quantize_row_q3_K_impl\n");
     int8_t L[QK_K];
     float scales[QK_K / 16];
     float weight[16];
@@ -1120,7 +1120,7 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
     // for (int64_t i = 0; i < 10; ++i) {
     //     GGML_LOG_DEBUG("%f ", x[i]);
     // }
-    printf("\n");
+    // printf("\n");
     for (int i = 0; i < nb; i++) {
         float sumx2 = 0;
         for (int j = 0; j < QK_K; ++j) sumx2 += x[j]*x[j];
@@ -1138,14 +1138,14 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
             sw[j] = sumw;
 
             scales[j] = make_qx_quants(16, 4, x + 16*j, L + 16*j, 1, weight);
-            GGML_LOG_DEBUG("scales[%d]: %f\n", j, scales[j]);
+            // GGML_LOG_DEBUG("scales[%d]: %f\n", j, scales[j]);
 
         }
 
         memset(y[i].scales, 0, 12);
 
         float d_block = make_qx_quants(QK_K/16, 32, scales, Ls, 1, sw);
-        GGML_LOG_DEBUG("d_block: %f\n", d_block);
+        // GGML_LOG_DEBUG("d_block: %f\n", d_block);
         for (int j = 0; j < QK_K/16; ++j) {
             int l = Ls[j];
             if (j < 8) {
@@ -1169,7 +1169,7 @@ static void quantize_row_q3_K_impl(const float * GGML_RESTRICT x, block_q3_K * G
             sc = j < 8 ? y[i].scales[j] & 0xF : y[i].scales[j-8] >> 4;
             sc = (sc | (((y[i].scales[8 + j%4] >> (2*(j/4))) & 3) << 4)) - 32;
             float d = GGML_FP16_TO_FP32(y[i].d) * sc;
-            GGML_LOG_DEBUG("d: %f\n", d);
+            // GGML_LOG_DEBUG("d: %f\n", d);
             if (!d) {
                 continue;
             }
@@ -2258,6 +2258,7 @@ void dequantize_row_iq2_xs(const block_iq2_xs * GGML_RESTRICT x, float * GGML_RE
             db[1] = d * (0.5f + (x[i].scales[ib32] >>  4)) * 0.25f;
             for (int l = 0; l < 4; ++l) {
                 const uint8_t * grid = (const uint8_t *)(iq2xs_grid + (x[i].qs[4*ib32 + l] & 511));
+                // const uint8_t * grid = (const uint8_t *)(iq2xxs_grid + (x[i].qs[4*ib32 + l] & 0xFF)); //aben: 06/17
                 const uint8_t  signs = ksigns_iq2xs[x[i].qs[4*ib32 + l] >> 9];
                 for (int j = 0; j < 8; ++j) {
                     y[j] = db[l/2] * grid[j] * (signs & kmask_iq2xs[j] ? -1.f : 1.f);
@@ -2404,6 +2405,7 @@ void dequantize_row_iq1_s(const block_iq1_s * GGML_RESTRICT x, float * GGML_REST
 
 // aben
 void dequantize_row_iq1_m(const block_iq1_m * GGML_RESTRICT x, float * GGML_RESTRICT y, int64_t k) {
+    // printf("dequantize_row_iq1_m\n");
     assert(k % QK_K == 0);
     const int64_t nb = k / QK_K;
 
@@ -2841,8 +2843,13 @@ void iq2xs_init_impl(enum ggml_type type) {
     const int kmap_size = 43692;
     //const int nwant = type == GGML_TYPE_IQ1_S ? 3 : 2;
     const int nwant = type == GGML_TYPE_IQ1_S || type == GGML_TYPE_IQ1_M ? 3 : type == GGML_TYPE_IQ2_S ? 1 : 2;
+    // const uint16_t * kgrid = type == GGML_TYPE_IQ2_XXS ? kgrid_2bit_256 :
+    //                          type == GGML_TYPE_IQ2_XS  ? kgrid_2bit_512 :
+    //                          type == GGML_TYPE_IQ1_S || type == GGML_TYPE_IQ1_M ? kgrid_1bit_2048 : kgrid_2bit_1024;
+
+    
     const uint16_t * kgrid = type == GGML_TYPE_IQ2_XXS ? kgrid_2bit_256 :
-                             type == GGML_TYPE_IQ2_XS  ? kgrid_2bit_512 :
+                             type == GGML_TYPE_IQ2_XS  ? kgrid_2bit_512 : //aben: 06/17 changed to 256
                              type == GGML_TYPE_IQ1_S || type == GGML_TYPE_IQ1_M ? kgrid_1bit_2048 : kgrid_2bit_1024;
     uint64_t * kgrid_q2xs;
     int      * kmap_q2xs;
@@ -2851,6 +2858,7 @@ void iq2xs_init_impl(enum ggml_type type) {
     //aben: suppose one entry in kgrid is 1010101010001000 - each entry is 16 bits
     //printf("================================================================= %s(grid_size = %d)\n", __func__, grid_size);
     uint64_t * the_grid = (uint64_t *)malloc(grid_size*sizeof(uint64_t));
+    // uint64_t * the_grid = malloc(grid_size * sizeof(*the_grid)); //aben: 06/17
     for (int k = 0; k < grid_size; ++k) {
         int8_t * pos = (int8_t *)(the_grid + k);
         for (int i = 0; i < 8; ++i) {
@@ -2958,7 +2966,7 @@ void iq2xs_free_impl(enum ggml_type type) {
 static int iq2_find_best_neighbour(const uint16_t * GGML_RESTRICT neighbours, const uint64_t * GGML_RESTRICT grid,
         const float * GGML_RESTRICT xval, const float * GGML_RESTRICT weight, float scale, int8_t * GGML_RESTRICT L) {
     
-    printf("in iq2_find_best_neighbour\n");
+    // printf("in iq2_find_best_neighbour\n");
     int num_neighbors = neighbours[0];
     GGML_ASSERT(num_neighbors > 0);
     float best_d2 = FLT_MAX;

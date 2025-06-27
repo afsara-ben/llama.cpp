@@ -5116,6 +5116,14 @@ kernel void kernel_mul_mv_q6_K_f32(
 
 // ======================= "True" 2-bit
 
+kernel void debug_write(
+    device uint       *debugBuffer [[ buffer(0) ]],
+    uint                tid         [[ thread_position_in_grid ]]
+) {
+    // For each thread, write 42 into its corresponding slot:
+    debugBuffer[tid] = 42;
+}
+
 template<int nr0, int nsg, int nw, typename args_t>
 void kernel_mul_mv_iq2_xxs_f32_impl(
         args_t args,
@@ -5125,8 +5133,8 @@ void kernel_mul_mv_iq2_xxs_f32_impl(
         threadgroup  char * shmem,
         uint3  tgpig,
         ushort tiisg,
-        ushort sgitg) {
-
+        ushort sgitg){
+            
     const int nb = args.ne00/QK_K;
     const int r0 = tgpig.x;
     const int r1 = tgpig.y;

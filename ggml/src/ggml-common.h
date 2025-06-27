@@ -427,6 +427,7 @@ static_assert(sizeof(block_iq4_xs) == sizeof(ggml_half) + sizeof(uint16_t) + QK_
 #if defined(GGML_COMMON_IMPL_C)
 #include <stdint.h>
 
+// #define GGML_TABLE_BEGIN(type, name, size) static __constant__ type name[size] = { //aben: 06/17
 #define GGML_TABLE_BEGIN(type, name, size) static const type name[size] = {
 #define GGML_TABLE_END() };
 
@@ -1006,6 +1007,7 @@ GGML_TABLE_BEGIN(uint32_t, iq3xxs_grid, 256)
     0x3e042c14, 0x3e0c1434, 0x3e0c2404, 0x3e140c14, 0x3e14242c, 0x3e142c14, 0x3e1c0404, 0x3e1c0c2c,
     0x3e1c1c1c, 0x3e1c3404, 0x3e24140c, 0x3e24240c, 0x3e2c0404, 0x3e2c0414, 0x3e2c1424, 0x3e341c04,
 GGML_TABLE_END()
+
 
 GGML_TABLE_BEGIN(uint32_t, iq3s_grid, 512)
     0x01010101, 0x01010103, 0x01010105, 0x0101010b, 0x0101010f, 0x01010301, 0x01010303, 0x01010305,

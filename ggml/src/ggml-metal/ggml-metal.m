@@ -291,6 +291,7 @@ static void ggml_backend_metal_device_rel(struct ggml_backend_metal_device_conte
 // kernels
 
 struct ggml_metal_kernel {
+    id<MTLBuffer>          debugBuffer; //aben
     id<MTLComputePipelineState> pipeline;
 };
 
@@ -924,10 +925,17 @@ static struct ggml_backend_metal_context * ggml_metal_init(ggml_backend_dev_t de
     // load kernels
     {
         NSError * error = nil;
-
+        uint32_t debugValue;
         for (int i = 0; i < GGML_METAL_KERNEL_TYPE_COUNT; ++i) {
             ctx->kernels[i].pipeline = nil;
+            ctx->kernels[i].debugBuffer = [device newBufferWithBytes:&debugValue
+                                         length:sizeof(debugValue)
+                                        options:MTLResourceStorageModeShared];
         }
+        
+        // [encoder setBuffer:k->debugBuffer
+        //             offset:0
+        //         atIndex:8];
 
 #define GGML_METAL_ADD_KERNEL(e, name, supported) \
         if (supported) { \
@@ -1317,6 +1325,7 @@ struct ggml_backend_metal_buffer {
 
     id<MTLBuffer> metal;
 };
+
 
 struct ggml_backend_metal_buffer_context {
     void * all_data;
@@ -2850,7 +2859,7 @@ static void ggml_metal_encode_node(
                             //GGML_LOG_INFO("aben: MUL_MM_IQ2_XXS_F32\n"); 
                             break;
                         case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ2_XS_F32 ].pipeline; ggml_kernel_MUL_MM_IQ2_XS_F32_count++; 
-                            //GGML_LOG_INFO("aben: MUL_MM_IQ2_XS_F32\n"); 
+                            GGML_LOG_DEBUG("aben: MUL_MM_IQ2_XS_F32\n"); 
                             break;
                         case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_IQ3_XXS_F32].pipeline; ggml_kernel_MUL_MM_IQ3_XXS_F32_count++; 
                             //GGML_LOG_INFO("aben: MUL_MM_IQ3_XXS_F32\n"); 
@@ -3071,8 +3080,16 @@ static void ggml_metal_encode_node(
                                 nsg = N_SG_IQ2_XS;
                                 nr0 = N_R0_IQ2_XS;
                                 smem = 512*8+128;
+                                // // Example: create a buffer to hold one integer
+                                // uint32_t debugValue = 0;
+                                // id<MTLBuffer> debugBuffer = [device newBufferWithBytes:&debugValue
+                                //                                                 length:sizeof(debugValue)
+                                //                                             options:MTLResourceStorageModeShared];
+                                // [encoder setBuffer:debugBuffer offset:0 atIndex:8]; // N = buffer index in your kernel
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ2_XS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
+                                // uint32_t *debugPtr = (uint32_t *)
+                                // ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_IQ2_XS_F32].debugBuffer.contents;
+                                // GGML_LOG_INFO("Debug value from GPU: %u\n", debugPtr[0]);
                             } break;
                         case GGML_TYPE_IQ3_XXS:
                             {
@@ -3236,7 +3253,11 @@ static void ggml_metal_encode_node(
                         case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q5_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q5_K_F32_count++; break;
                         case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_Q6_K_F32   ].pipeline;  ggml_kernel_MUL_MM_ID_Q6_K_F32_count++; break;
                         case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XXS_F32].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_XXS_F32_count++; break;  
-                        case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XS_F32 ].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_XS_F32_count++; break;
+                        case GGML_TYPE_IQ2_XS:  
+                            {
+                                pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_XS_F32 ].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_XS_F32_count++; 
+                                break;
+                            }
                         case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_XXS_F32].pipeline;  ggml_kernel_MUL_MM_ID_IQ3_XXS_F32_count++; break;
                         case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ3_S_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ3_S_F32_count++; break;
                         case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MM_ID_IQ2_S_F32  ].pipeline;  ggml_kernel_MUL_MM_ID_IQ2_S_F32_count++; break;
@@ -3422,7 +3443,7 @@ static void ggml_metal_encode_node(
                                 nr0 = N_R0_IQ2_XS;
                                 smem = 512*8+128;
                                 pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_MUL_MV_ID_IQ2_XS_F32].pipeline;
-                                // GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
+                                GGML_LOG_INFO("aben: MUL_MV_IQ2_XS_F32\n");
                             } break;
                         case GGML_TYPE_IQ3_XXS:
                             {
@@ -3558,7 +3579,11 @@ static void ggml_metal_encode_node(
                     case GGML_TYPE_Q5_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q5_K   ].pipeline;  ggml_kernel_GET_ROWS_Q5_K_count++; break;
                     case GGML_TYPE_Q6_K:    pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_Q6_K   ].pipeline;  ggml_kernel_GET_ROWS_Q6_K_count++; break;
                     case GGML_TYPE_IQ2_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XXS].pipeline;  ggml_kernel_GET_ROWS_IQ2_XXS_count++; break;
-                    case GGML_TYPE_IQ2_XS:  pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XS ].pipeline;  ggml_kernel_GET_ROWS_IQ2_XS_count++; break;
+                    case GGML_TYPE_IQ2_XS:  
+                        {
+                            pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_XS ].pipeline;  ggml_kernel_GET_ROWS_IQ2_XS_count++; 
+                            break;
+                        }
                     case GGML_TYPE_IQ3_XXS: pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_XXS].pipeline;  ggml_kernel_GET_ROWS_IQ3_XXS_count++; break;
                     case GGML_TYPE_IQ3_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ3_S  ].pipeline;  ggml_kernel_GET_ROWS_IQ3_S_count++; break;
                     case GGML_TYPE_IQ2_S:   pipeline = ctx->kernels[GGML_METAL_KERNEL_TYPE_GET_ROWS_IQ2_S  ].pipeline;  ggml_kernel_GET_ROWS_IQ2_S_count++; break;

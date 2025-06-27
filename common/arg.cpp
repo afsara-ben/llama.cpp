@@ -1057,6 +1057,11 @@ static void add_rpc_devices(std::string servers) {
 bool common_params_parse(int argc, char ** argv, common_params & params, llama_example ex, void(*print_usage)(int, char **)) {
     auto ctx_arg = common_params_parser_init(params, ex, print_usage);
     const common_params params_org = ctx_arg.params; // the example can modify the default params
+    // printf("argc: %d\n", argc);
+    // printf("argv: %s\n", argv[0]);
+    // printf("argv[1]: %s\n", argv[1]);
+    // printf("argv[2]: %s\n", argv[2]);
+    // printf("argv[3]: %s\n", argv[3]);
 
     try {
         if (!common_params_parse_ex(argc, argv, ctx_arg)) {
