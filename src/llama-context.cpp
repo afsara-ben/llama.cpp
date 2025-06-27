@@ -1340,9 +1340,9 @@ int llama_context::decode(llama_batch & inp_batch) {
         }
 
         // plot the computation graph in dot format (for debugging purposes)
-        //if (n_past%100 == 0) {
+        // if (n_past%100 == 0) {
         //    ggml_graph_dump_dot(gf, NULL, "llama.dot");
-        //}
+        // }
 
         auto * t_logits = cparams.embeddings ? nullptr         : res->get_logits();
         auto * t_embd   = cparams.embeddings ? res->get_embd() : nullptr;
@@ -1421,6 +1421,7 @@ int llama_context::decode(llama_batch & inp_batch) {
             }
         }
 
+        // printf("n_outputs_prev = %lld, n_outputs = %d\n", n_outputs_prev, n_outputs);
         n_outputs_prev += n_outputs;
     }
 

@@ -1997,7 +1997,7 @@ struct test_mul_mat : public test_case {
 
     uint64_t op_flops(ggml_tensor * t) override {
         GGML_UNUSED(t);
-        return 2 * m * n * k * bs[0] * nr[0] * bs[1] * nr[1];
+        return 2 * m * n * k * bs[0] * nr[0] * bs[1] * nr[1]; //aben: flop calculation
     }
 
     test_mul_mat(ggml_type type_a = GGML_TYPE_F32, ggml_type type_b = GGML_TYPE_F32,
@@ -3825,41 +3825,53 @@ struct test_falcon : public test_llm {
 // ###########################################
 // ## Section 3: GGML Op Test Instantiation ##
 // ###########################################
+// static const ggml_type all_types[] = {
+//     GGML_TYPE_F32, GGML_TYPE_F16, GGML_TYPE_BF16,
+//     GGML_TYPE_Q4_0, GGML_TYPE_Q4_1,
+//     GGML_TYPE_Q5_0, GGML_TYPE_Q5_1,
+//     GGML_TYPE_Q8_0,
+//     GGML_TYPE_Q2_K, GGML_TYPE_Q3_K,
+//     GGML_TYPE_Q4_K, GGML_TYPE_Q5_K,
+//     GGML_TYPE_Q6_K,
+//     // GGML_TYPE_TQ1_0, GGML_TYPE_TQ2_0, // TODO: implement for all backends
+//     GGML_TYPE_IQ2_XXS, GGML_TYPE_IQ2_XS, GGML_TYPE_IQ2_S,
+//     GGML_TYPE_IQ3_XXS, GGML_TYPE_IQ1_S, GGML_TYPE_IQ1_M,
+//     GGML_TYPE_IQ4_NL, GGML_TYPE_IQ3_S, GGML_TYPE_IQ4_XS,
+// };
+
+// static const ggml_type base_types[] = {
+//     GGML_TYPE_F32, GGML_TYPE_F16,
+//     GGML_TYPE_Q8_0, // for I8MM tests
+//     GGML_TYPE_Q4_0,
+//     GGML_TYPE_Q4_1, // for I8MM tests
+//     GGML_TYPE_Q4_K,
+//     GGML_TYPE_IQ2_XXS
+// };
+
+// static const ggml_type other_types[] = {
+//     GGML_TYPE_Q4_1,
+//     GGML_TYPE_Q5_0, GGML_TYPE_Q5_1,
+//     GGML_TYPE_Q8_0,
+//     GGML_TYPE_Q2_K, GGML_TYPE_Q3_K,
+//     GGML_TYPE_Q5_K,
+//     GGML_TYPE_Q6_K,
+//     // GGML_TYPE_TQ1_0, GGML_TYPE_TQ2_0, // TODO: implement for all backends
+//     GGML_TYPE_IQ2_XS, GGML_TYPE_IQ2_S,
+//     GGML_TYPE_IQ3_XXS, GGML_TYPE_IQ1_S, GGML_TYPE_IQ1_M,
+//     GGML_TYPE_IQ4_NL, GGML_TYPE_IQ3_S, GGML_TYPE_IQ4_XS,
+//     GGML_TYPE_BF16,
+// };
+
 static const ggml_type all_types[] = {
-    GGML_TYPE_F32, GGML_TYPE_F16, GGML_TYPE_BF16,
-    GGML_TYPE_Q4_0, GGML_TYPE_Q4_1,
-    GGML_TYPE_Q5_0, GGML_TYPE_Q5_1,
-    GGML_TYPE_Q8_0,
-    GGML_TYPE_Q2_K, GGML_TYPE_Q3_K,
-    GGML_TYPE_Q4_K, GGML_TYPE_Q5_K,
-    GGML_TYPE_Q6_K,
-    // GGML_TYPE_TQ1_0, GGML_TYPE_TQ2_0, // TODO: implement for all backends
-    GGML_TYPE_IQ2_XXS, GGML_TYPE_IQ2_XS, GGML_TYPE_IQ2_S,
-    GGML_TYPE_IQ3_XXS, GGML_TYPE_IQ1_S, GGML_TYPE_IQ1_M,
-    GGML_TYPE_IQ4_NL, GGML_TYPE_IQ3_S, GGML_TYPE_IQ4_XS,
+    GGML_TYPE_F32, GGML_TYPE_F16, GGML_TYPE_IQ1_M
 };
 
 static const ggml_type base_types[] = {
-    GGML_TYPE_F32, GGML_TYPE_F16,
-    GGML_TYPE_Q8_0, // for I8MM tests
-    GGML_TYPE_Q4_0,
-    GGML_TYPE_Q4_1, // for I8MM tests
-    GGML_TYPE_Q4_K,
-    GGML_TYPE_IQ2_XXS
+    GGML_TYPE_F32, GGML_TYPE_F16
 };
 
 static const ggml_type other_types[] = {
-    GGML_TYPE_Q4_1,
-    GGML_TYPE_Q5_0, GGML_TYPE_Q5_1,
-    GGML_TYPE_Q8_0,
-    GGML_TYPE_Q2_K, GGML_TYPE_Q3_K,
-    GGML_TYPE_Q5_K,
-    GGML_TYPE_Q6_K,
-    // GGML_TYPE_TQ1_0, GGML_TYPE_TQ2_0, // TODO: implement for all backends
-    GGML_TYPE_IQ2_XS, GGML_TYPE_IQ2_S,
-    GGML_TYPE_IQ3_XXS, GGML_TYPE_IQ1_S, GGML_TYPE_IQ1_M,
-    GGML_TYPE_IQ4_NL, GGML_TYPE_IQ3_S, GGML_TYPE_IQ4_XS,
-    GGML_TYPE_BF16,
+    GGML_TYPE_IQ1_M
 };
 
 // Test cases for evaluation: should try to cover edge cases while using small input sizes to keep the runtime low
@@ -4484,7 +4496,7 @@ static std::vector<std::unique_ptr<test_case>> make_test_cases_eval() {
     return test_cases;
 }
 
-// Test cases for performance evaluation: should be representative of real-world use cases
+// Test cases for performance evaluation: should be representative of real-world use cases //aben this
 static std::vector<std::unique_ptr<test_case>> make_test_cases_perf() {
     std::vector<std::unique_ptr<test_case>> test_cases;
 
@@ -4510,10 +4522,12 @@ static std::vector<std::unique_ptr<test_case>> make_test_cases_perf() {
     test_cases.emplace_back(new test_mul_mat(GGML_TYPE_F16, GGML_TYPE_F32, 16416, 1, 128, {8,  1}, {4, 1}, {0, 2, 1, 3}));
     test_cases.emplace_back(new test_mul_mat(GGML_TYPE_F16, GGML_TYPE_F32, 128, 1, 16416, {8,  1}, {4, 1}, {0, 1, 2, 3}, true));
 
-    for (int bs : {1, 2, 3, 4, 5, 8, 512}) {
+    // for (int bs : {1, 2, 3, 4, 5, 8, 512}) {
+    for (int bs : {1, 512}) {
         for (ggml_type type_a : all_types) {
             for (ggml_type type_b : {GGML_TYPE_F32}) {
-                test_cases.emplace_back(new test_mul_mat(type_a, type_b, 4096, bs, 14336, {1,  1}, {1, 1}));
+                // test_cases.emplace_back(new test_mul_mat(type_a, type_b, 4096, bs, 14336, {1,  1}, {1, 1}));
+                test_cases.emplace_back(new test_mul_mat(type_a, type_b, 4096, bs, 128256, {1,  1}, {1, 1}));
             }
         }
     }
@@ -4544,10 +4558,11 @@ static bool test_backend(ggml_backend_t backend, test_mode mode, const char * op
         if (params_filter == nullptr) {
             return;
         }
-
+        printf("params_filter: %s\n", params_filter);
         std::regex params_filter_regex(params_filter);
 
         for (auto it = test_cases.begin(); it != test_cases.end();) {
+            printf("test_cases: %s\n", (*it)->vars().c_str());
             if (!std::regex_search((*it)->vars(), params_filter_regex)) {
                 it = test_cases.erase(it);
                 continue;
@@ -4653,7 +4668,7 @@ int main(int argc, char ** argv) {
             return 1;
         }
     }
-
+    // mode = MODE_PERF;
     // load and enumerate backends
     ggml_backend_load_all();
 

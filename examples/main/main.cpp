@@ -154,7 +154,6 @@ int main(int argc, char ** argv) {
     ctx = llama_init.context.get();
     // LOG_INF("\n\nsleeping for 8 seconds\n");
     // std::this_thread::sleep_for(std::chrono::seconds(8));
-
     if (model == NULL) {
         LOG_ERR("%s: error: unable to load model\n", __func__);
         return 1;

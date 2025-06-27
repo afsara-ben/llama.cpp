@@ -4485,6 +4485,11 @@ struct llm_build_llama : public llm_graph_context {
                 cb(Qcur, "Qcur", il);
                 cb(Kcur, "Kcur", il);
                 cb(Vcur, "Vcur", il);
+                
+                //aben
+                // LLAMA_LOG_INFO("Type: %s  ne: %d, %d, %d, %d\n", ggml_type_name(Qcur->type), Qcur->ne[0], Qcur->ne[1], Qcur->ne[2], Qcur->ne[3]);
+                // LLAMA_LOG_INFO("Type: %s  ne: %d, %d, %d, %d\n", ggml_type_name(Kcur->type), Kcur->ne[0], Kcur->ne[1], Kcur->ne[2], Kcur->ne[3]);
+                // LLAMA_LOG_INFO("Type: %s  ne: %d, %d, %d, %d\n", ggml_type_name(Vcur->type), Vcur->ne[0], Vcur->ne[1], Vcur->ne[2], Vcur->ne[3]);
 
                 if (arch == LLM_ARCH_LLAMA4 && use_rope && hparams.use_kq_norm) {
                     // Llama4TextL2Norm
